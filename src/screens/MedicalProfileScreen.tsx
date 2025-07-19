@@ -148,7 +148,7 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
           <Text className="text-gray-700 font-medium mb-2">Height (ft/in)</Text>
           <TextInput
             className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-            placeholder="5'8\""
+            placeholder={'5\'8"'}
             value={profile.height}
             onChangeText={(text) => setProfile(prev => ({ ...prev, height: text }))}
           />

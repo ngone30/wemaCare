@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, ScrollView, Alert, Image } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { CameraView, CameraType, useCameraPermissions, CameraViewRef } from 'expo-camera';
+
 import * as ImagePicker from 'expo-image-picker';
 import { transcribeAudio } from '../api/transcribe-audio';
 import { getOpenAITextResponse } from '../api/chat-service';
@@ -21,10 +21,9 @@ export default function SymptomInputScreen({ onAnalysisComplete }: SymptomInputS
   const [textInput, setTextInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [showCamera, setShowCamera] = useState(false);
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const cameraRef = useRef<CameraViewRef>(null);
+
 
   const addTextSymptom = () => {
     if (textInput.trim()) {
@@ -95,51 +94,56 @@ export default function SymptomInputScreen({ onAnalysisComplete }: SymptomInputS
   };
 
   const takePicture = async () => {
-    if (!cameraRef.current) return;
-
     try {
-      const photo = await cameraRef.current.takePictureAsync({
+      
+      // For now, simulate taking a picture and use the image picker instead
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
         quality: 0.7,
         base64: true,
       });
 
-      if (photo) {
-        setShowCamera(false);
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
         
-        // Analyze the image with AI
         Alert.alert('Processing', 'Analyzing your image...');
         
-        const imageAnalysis = await getOpenAITextResponse([
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'Please analyze this medical/health-related image and describe what you see. Focus on any visible symptoms, conditions, or health concerns that might be relevant for medical consultation.'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${photo.base64}`
+        try {
+          const imageAnalysis = await getOpenAITextResponse([
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: 'Please analyze this medical/health-related image and describe what you see. Focus on any visible symptoms, conditions, or health concerns that might be relevant for medical consultation.'
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: `data:image/jpeg;base64,${asset.base64}`
+                  }
                 }
-              }
-            ] as any
-          }
-        ]);
+              ] as any
+            }
+          ]);
 
-        const newSymptom: SymptomInput = {
-          id: Date.now().toString(),
-          type: 'image',
-          content: imageAnalysis.content,
-          imageUri: photo.uri,
-          timestamp: new Date().toISOString()
-        };
-        
-        setSymptoms(prev => [...prev, newSymptom]);
+          const newSymptom: SymptomInput = {
+            id: Date.now().toString(),
+            type: 'image',
+            content: imageAnalysis.content,
+            imageUri: asset.uri,
+            timestamp: new Date().toISOString()
+          };
+          
+          setSymptoms(prev => [...prev, newSymptom]);
+        } catch (error) {
+          Alert.alert('Error', 'Failed to analyze image');
+        }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to analyze image');
-      setShowCamera(false);
+      Alert.alert('Error', 'Failed to take picture');
     }
   };
 
@@ -242,58 +246,7 @@ Remember: This is for educational purposes only and not a replacement for profes
     }
   };
 
-  if (showCamera) {
-    if (!cameraPermission) {
-      return <View />;
-    }
 
-    if (!cameraPermission.granted) {
-      return (
-        <SafeAreaView className="flex-1 bg-black justify-center items-center">
-          <Text className="text-white text-center mb-4">Camera permission is required</Text>
-          <Pressable
-            className="bg-blue-500 px-6 py-3 rounded-lg"
-            onPress={requestCameraPermission}
-          >
-            <Text className="text-white font-semibold">Grant Permission</Text>
-          </Pressable>
-        </SafeAreaView>
-      );
-    }
-
-    return (
-      <View style={{ flex: 1 }}>
-        <CameraView
-          ref={cameraRef}
-          style={{ flex: 1 }}
-          facing="back"
-        />
-        <View className="absolute top-0 left-0 right-0 bottom-0 z-10">
-          <SafeAreaView className="flex-1">
-            <View className="flex-1 justify-between">
-              <View className="flex-row justify-between items-center px-6 py-4">
-                <Pressable
-                  className="bg-black/50 rounded-full p-3"
-                  onPress={() => setShowCamera(false)}
-                >
-                  <Ionicons name="close" size={24} color="white" />
-                </Pressable>
-              </View>
-              
-              <View className="flex-row justify-center items-center pb-12">
-                <Pressable
-                  className="bg-white rounded-full p-4 mx-4"
-                  onPress={takePicture}
-                >
-                  <Ionicons name="camera-outline" size={32} color="black" />
-                </Pressable>
-              </View>
-            </View>
-          </SafeAreaView>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -317,7 +270,7 @@ Remember: This is for educational purposes only and not a replacement for profes
             
             <Pressable
               className="flex-1 bg-green-50 border border-green-200 rounded-xl py-3 items-center"
-              onPress={() => setShowCamera(true)}
+              onPress={takePicture}
             >
               <Ionicons name="camera-outline" size={24} color="#10B981" />
               <Text className="text-green-600 font-medium mt-1">Camera</Text>
