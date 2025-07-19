@@ -327,6 +327,42 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           />
         </View>
 
+        {/* Mental Health Section */}
+        <View style={{ marginTop: 24 }}>
+          <Text style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#6B7280',
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}>
+            Mental Health
+          </Text>
+          
+          <SettingItem
+            icon="heart-outline"
+            title="Mental Health Resources"
+            subtitle="Crisis support & wellness tips"
+            onPress={() => Alert.alert('Mental Health Resources', 'Find support for mental health concerns, crisis helplines, and wellness resources.')}
+          />
+          
+          <SettingItem
+            icon="call-outline"
+            title="Crisis Helpline"
+            subtitle="24/7 emergency support"
+            onPress={() => Alert.alert(
+              'Crisis Support',
+              'If you are experiencing a mental health crisis, please call:\n\n🌍 International: 988\n🇳🇬 Nigeria: 080-91-51-51-51\n🇿🇦 South Africa: 0800-567-567\n🇰🇪 Kenya: 1192',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Call Now', onPress: () => Alert.alert('Emergency', 'In a real app, this would dial the crisis line') }
+              ]
+            )}
+          />
+        </View>
+
         {/* Support Section */}
         <View style={{ marginTop: 24 }}>
           <Text style={{
@@ -340,6 +376,13 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           }}>
             Support
           </Text>
+          
+          <SettingItem
+            icon="globe-outline"
+            title="Language Support"
+            subtitle="15+ African languages available"
+            onPress={() => Alert.alert('Language Support', 'WemaCARE supports 15+ African languages with AI-powered translation for accurate medical communication.')}
+          />
           
           <SettingItem
             icon="help-circle-outline"
@@ -358,8 +401,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           <SettingItem
             icon="information-circle-outline"
             title="About WemaCARE"
-            subtitle="Version 1.0.0"
-            onPress={() => Alert.alert('About WemaCARE', 'App information and legal notices would be shown here')}
+            subtitle="Version 1.0.0 - Powered by AI"
+            onPress={() => Alert.alert('About WemaCARE', 'WemaCARE is an AI-powered healthcare platform designed for African communities, supporting 15+ local languages and providing culturally-sensitive medical recommendations.')}
           />
         </View>
 

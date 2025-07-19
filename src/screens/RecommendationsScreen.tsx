@@ -405,6 +405,140 @@ Format your response as JSON with this structure:
             ))}
           </View>
 
+          {/* Mental Health Support */}
+          {showMentalHealthSupport && mentalHealthAssessment && (
+            <View className="px-6 py-6 border-t border-gray-200">
+              <View className="flex-row items-center mb-4">
+                <View style={{
+                  backgroundColor: '#FFF8E1',
+                  borderRadius: 12,
+                  padding: 8,
+                  marginRight: 12
+                }}>
+                  <Ionicons name="heart-outline" size={24} color="#FF8E53" />
+                </View>
+                <View>
+                  <Text className="text-xl font-bold text-gray-900">
+                    Mental Health Support
+                  </Text>
+                  <Text className="text-gray-600">
+                    Professional support recommended
+                  </Text>
+                </View>
+              </View>
+
+              {/* Risk Level Alert */}
+              {mentalHealthAssessment.riskLevel !== 'low' && (
+                <View style={{
+                  backgroundColor: mentalHealthAssessment.riskLevel === 'critical' ? '#FEF2F2' : '#FFF8E1',
+                  borderColor: mentalHealthAssessment.riskLevel === 'critical' ? '#FF7043' : '#FBC02D',
+                  borderWidth: 1,
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 16
+                }}>
+                  <View className="flex-row items-center mb-2">
+                    <Ionicons 
+                      name={mentalHealthAssessment.riskLevel === 'critical' ? 'warning' : 'information-circle'} 
+                      size={20} 
+                      color={mentalHealthAssessment.riskLevel === 'critical' ? '#FF7043' : '#FBC02D'} 
+                    />
+                    <Text style={{
+                      fontWeight: '600',
+                      marginLeft: 8,
+                      color: mentalHealthAssessment.riskLevel === 'critical' ? '#DC2626' : '#92400E'
+                    }}>
+                      {mentalHealthAssessment.riskLevel === 'critical' ? 'Immediate Attention Needed' : 'Mental Health Assessment'}
+                    </Text>
+                  </View>
+                  <Text style={{
+                    color: mentalHealthAssessment.riskLevel === 'critical' ? '#DC2626' : '#92400E',
+                    lineHeight: 20
+                  }}>
+                    Risk Level: {mentalHealthAssessment.riskLevel.charAt(0).toUpperCase() + mentalHealthAssessment.riskLevel.slice(1)}
+                    {mentalHealthAssessment.urgency && ' - Urgent care recommended'}
+                  </Text>
+                  
+                  {mentalHealthAssessment.riskLevel === 'critical' && (
+                    <Pressable
+                      style={{
+                        backgroundColor: '#FF7043',
+                        borderRadius: 8,
+                        paddingVertical: 12,
+                        paddingHorizontal: 16,
+                        marginTop: 12,
+                        alignItems: 'center'
+                      }}
+                      onPress={() => {
+                        const crisisResources = getMentalHealthCrisisResources(currentLanguage);
+                        Alert.alert(
+                          crisisResources.title,
+                          crisisResources.resources[0].description,
+                          [
+                            { text: 'Cancel', style: 'cancel' },
+                            { 
+                              text: 'Call Now', 
+                              onPress: () => Linking.openURL(`tel:${crisisResources.resources[0].phone}`)
+                            }
+                          ]
+                        );
+                      }}
+                    >
+                      <Text style={{ color: 'white', fontWeight: '600' }}>
+                        Get Immediate Help
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+              )}
+
+              {/* Mental Health Conditions */}
+              {mentalHealthAssessment.conditions.length > 0 && (
+                <View className="mb-4">
+                  <Text className="text-lg font-semibold text-gray-900 mb-2">
+                    Potential Areas of Concern
+                  </Text>
+                  <View className="flex-row flex-wrap">
+                    {mentalHealthAssessment.conditions.map((condition, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          backgroundColor: '#E8F5E8',
+                          borderRadius: 16,
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          marginRight: 8,
+                          marginBottom: 8
+                        }}
+                      >
+                        <Text style={{ color: '#2E7D32', fontSize: 14 }}>
+                          {condition}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Mental Health Recommendations */}
+              {mentalHealthAssessment.recommendations.length > 0 && (
+                <View className="mb-4">
+                  <Text className="text-lg font-semibold text-gray-900 mb-3">
+                    Recommended Actions
+                  </Text>
+                  {mentalHealthAssessment.recommendations.map((recommendation, index) => (
+                    <View key={index} className="flex-row items-start mb-2">
+                      <Ionicons name="checkmark-circle" size={18} color="#2E7D32" style={{ marginRight: 8, marginTop: 2 }} />
+                      <Text className="text-gray-700 flex-1 leading-relaxed">
+                        {recommendation}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+
           {/* AI Reasoning */}
           <View className="px-6 py-6 bg-gray-50 border-t border-gray-200">
             <Text className="text-lg font-semibold text-gray-900 mb-3">

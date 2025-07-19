@@ -278,6 +278,25 @@ export default function SymptomInputScreen({ onAnalysisComplete, onBack }: Sympt
         {/* Description */}
         <View className="px-6 py-4 border-b border-gray-200">
           <Text className="text-gray-600">Add your symptoms using text, voice, or images</Text>
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 8,
+            backgroundColor: '#E8F5E8',
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 6
+          }}>
+            <Ionicons name="globe-outline" size={16} color="#2E7D32" />
+            <Text style={{
+              fontSize: 12,
+              color: '#2E7D32',
+              marginLeft: 6,
+              fontWeight: '500'
+            }}>
+              🌍 Available in 15+ African languages
+            </Text>
+          </View>
         </View>
 
         {/* Input Methods */}
