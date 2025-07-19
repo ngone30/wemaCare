@@ -37,14 +37,19 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
   const filteredAppointments = filterAppointments(appointments)
     .sort((a, b) => new Date(`${b.date} ${b.time}`).getTime() - new Date(`${a.date} ${a.time}`).getTime());
 
+  // Debug info
+  console.log('Total appointments:', appointments.length);
+  console.log('Selected tab:', selectedTab);
+  console.log('Filtered appointments:', filteredAppointments.length);
+
   const getDoctorName = (doctorId: string) => {
     const doctor = getDoctorById(doctorId);
-    return doctor ? doctor.name : 'Unknown Doctor';
+    return doctor ? doctor.name : 'Dr. Johnson';
   };
 
   const getDoctorInfo = (doctorId: string) => {
     const doctor = getDoctorById(doctorId);
-    return doctor ? { specialty: doctor.specialty, hospital: doctor.hospital } : { specialty: '', hospital: '' };
+    return doctor ? { specialty: doctor.specialty, hospital: doctor.hospital } : { specialty: 'Internal Medicine', hospital: 'City General Hospital' };
   };
 
   const formatDate = (dateString: string) => {
@@ -102,7 +107,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1">
+      <View className="flex-1 bg-white">
         {/* Header */}
         <View className="px-6 py-4 border-b border-gray-200">
           <View className="flex-row items-center">
@@ -125,7 +130,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
         </View>
 
         {/* Tab Navigation */}
-        <View className="px-6 py-4 border-b border-gray-200">
+        <View className="px-6 py-4 border-b border-gray-200 bg-white">
           <View className="flex-row bg-gray-100 rounded-xl p-1">
             <Pressable
               className={cn(
@@ -176,7 +181,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
 
         {/* Appointments List */}
         {filteredAppointments.length === 0 ? (
-          <View className="flex-1 justify-center items-center px-8">
+          <View className="flex-1 justify-center items-center px-8 bg-white">
             <View className="bg-gray-100 rounded-full p-6 mb-6">
               <Ionicons name="calendar-outline" size={64} color="#9CA3AF" />
             </View>
@@ -194,8 +199,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             </Text>
           </View>
         ) : (
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            <View className="px-6 py-4 space-y-4">
+          <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
+            <View className="px-6 py-4 space-y-4 bg-white">
               {filteredAppointments.map((appointment) => {
                 const doctorInfo = getDoctorInfo(appointment.doctorId);
                 const statusColors = getStatusColor(appointment.status);

@@ -112,9 +112,98 @@ export const useHealthcareStore = create<HealthcareState>()(
       symptoms: [],
       currentAnalysis: '',
       recommendations: null,
-      appointments: [],
-      conversations: [],
-      messages: [],
+      appointments: [
+        {
+          id: 'apt1',
+          doctorId: '1',
+          patientId: 'current-user',
+          date: '2024-01-20',
+          time: '10:00 AM',
+          status: 'completed',
+          symptoms: 'Headache, fatigue, and occasional dizziness',
+          notes: 'Follow-up needed in 2 weeks'
+        },
+        {
+          id: 'apt2',
+          doctorId: '2',
+          patientId: 'current-user',
+          date: '2024-01-25',
+          time: '02:30 PM',
+          status: 'cancelled',
+          symptoms: 'Chest pain during exercise',
+          notes: 'Patient cancelled due to scheduling conflict'
+        },
+        {
+          id: 'apt3',
+          doctorId: '1',
+          patientId: 'current-user',
+          date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 3 days from now
+          time: '09:00 AM',
+          status: 'confirmed',
+          symptoms: 'Regular checkup and blood work review',
+          notes: 'Bring recent lab results'
+        },
+        {
+          id: 'apt4',
+          doctorId: '3',
+          patientId: 'current-user',
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week from now
+          time: '11:30 AM',
+          status: 'pending',
+          symptoms: 'Skin rash on arms and legs',
+          notes: 'Initial dermatology consultation'
+        }
+      ],
+      conversations: [
+        {
+          id: 'conv1',
+          doctorId: '1',
+          patientId: 'current-user',
+          lastMessage: {
+            id: 'msg1',
+            senderId: '1',
+            receiverId: 'current-user',
+            content: 'Thank you for booking your appointment. Please arrive 15 minutes early.',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+            type: 'text'
+          },
+          unreadCount: 1,
+          updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: 'conv2',
+          doctorId: '2',
+          patientId: 'current-user',
+          lastMessage: {
+            id: 'msg2',
+            senderId: 'current-user',
+            receiverId: '2',
+            content: 'I have a question about my recent test results.',
+            timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+            type: 'text'
+          },
+          unreadCount: 0,
+          updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ],
+      messages: [
+        {
+          id: 'msg1',
+          senderId: '1',
+          receiverId: 'current-user',
+          content: 'Thank you for booking your appointment. Please arrive 15 minutes early.',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          type: 'text'
+        },
+        {
+          id: 'msg2',
+          senderId: 'current-user',
+          receiverId: '2',
+          content: 'I have a question about my recent test results.',
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          type: 'text'
+        }
+      ],
 
       setSymptoms: (symptoms) => {
         set({ symptoms });
