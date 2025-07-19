@@ -10,6 +10,7 @@ import { getOpenAITextResponse } from '../api/chat-service';
 import { useAuthStore } from '../state/authStore';
 import { SymptomInput } from '../types/healthcare';
 import { cn } from '../utils/cn';
+import AppHeader from '../components/AppHeader';
 
 interface SymptomInputScreenProps {
   onAnalysisComplete: (symptoms: SymptomInput[], analysis: string) => void;
@@ -250,21 +251,15 @@ Remember: This is for educational purposes only and not a replacement for profes
 
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <AppHeader 
+        title="Describe Your Symptoms"
+        showBackButton
+        onBack={onBack}
+      />
       <View className="flex-1">
-        {/* Header */}
+        {/* Description */}
         <View className="px-6 py-4 border-b border-gray-200">
-          <View className="flex-row items-center mb-2">
-            <Pressable
-              className="mr-4 p-2 -ml-2"
-              onPress={onBack}
-            >
-              <Ionicons name="arrow-back" size={24} color="#374151" />
-            </Pressable>
-            <View className="flex-1">
-              <Text className="text-2xl font-bold text-gray-900">Describe Your Symptoms</Text>
-            </View>
-          </View>
           <Text className="text-gray-600">Add your symptoms using text, voice, or images</Text>
         </View>
 
@@ -403,6 +398,6 @@ Remember: This is for educational purposes only and not a replacement for profes
           </View>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

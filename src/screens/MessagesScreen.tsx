@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
 import { cn } from '../utils/cn';
+import AppHeader from '../components/AppHeader';
 
 interface MessagesScreenProps {
   onBack: () => void;
@@ -49,27 +50,23 @@ export default function MessagesScreen({ onBack, onSelectConversation }: Message
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <AppHeader 
+        title="Messages"
+        showBackButton
+        onBack={onBack}
+        rightComponent={
+          <Pressable style={{ padding: 8 }}>
+            <Ionicons name="create-outline" size={24} color="#3B82F6" />
+          </Pressable>
+        }
+      />
       <View className="flex-1">
-        {/* Header */}
-        <View className="px-6 py-4 border-b border-gray-200">
-          <View className="flex-row items-center">
-            <Pressable
-              className="mr-4 p-2 -ml-2"
-              onPress={onBack}
-            >
-              <Ionicons name="arrow-back" size={24} color="#374151" />
-            </Pressable>
-            <View className="flex-1">
-              <Text className="text-2xl font-bold text-gray-900">Messages</Text>
-              <Text className="text-gray-600">
-                {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
-              </Text>
-            </View>
-            <Pressable className="p-2">
-              <Ionicons name="create-outline" size={24} color="#3B82F6" />
-            </Pressable>
-          </View>
+        {/* Conversation count */}
+        <View className="px-6 py-2 border-b border-gray-200">
+          <Text className="text-gray-600">
+            {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
+          </Text>
         </View>
 
         {/* Conversations List */}
@@ -156,6 +153,6 @@ export default function MessagesScreen({ onBack, onSelectConversation }: Message
           </View>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

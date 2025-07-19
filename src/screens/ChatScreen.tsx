@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../types/healthcare';
@@ -138,11 +138,23 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
               </Text>
             </View>
             
-            <Pressable className="p-2">
+            <Pressable 
+              className="p-2"
+              onPress={() => {
+                // Video call functionality - would integrate with video calling service
+                alert(`Starting video call with Dr. ${doctor.name}...`);
+              }}
+            >
               <Ionicons name="videocam-outline" size={24} color="#3B82F6" />
             </Pressable>
             
-            <Pressable className="p-2 ml-2">
+            <Pressable 
+              className="p-2 ml-2"
+              onPress={() => {
+                // Phone call functionality - would integrate with calling service
+                alert(`Calling Dr. ${doctor.name} at ${doctor.phone || '(555) 123-4567'}...`);
+              }}
+            >
               <Ionicons name="call-outline" size={24} color="#3B82F6" />
             </Pressable>
           </View>
@@ -223,6 +235,10 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
         {/* Message Input */}
         <View className="bg-white px-4 py-4 border-t border-gray-200">
           <View className="flex-row items-end space-x-3">
+            <Pressable className="p-3 bg-gray-100 rounded-full">
+              <Ionicons name="attach-outline" size={20} color="#6B7280" />
+            </Pressable>
+            
             <View className="flex-1 bg-gray-100 rounded-2xl px-4 py-3">
               <TextInput
                 className="text-gray-900 max-h-24"
@@ -231,8 +247,20 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                 onChangeText={setMessageText}
                 multiline
                 textAlignVertical="top"
+                returnKeyType="send"
+                onSubmitEditing={handleSendMessage}
+                blurOnSubmit={false}
               />
             </View>
+            
+            <Pressable 
+              className="p-3 bg-gray-100 rounded-full"
+              onPress={() => {
+                Alert.alert('Voice Message', 'Voice recording feature would be implemented here');
+              }}
+            >
+              <Ionicons name="mic-outline" size={20} color="#6B7280" />
+            </Pressable>
             
             <Pressable
               className={messageText.trim() ? "rounded-full p-3 bg-blue-500" : "rounded-full p-3 bg-gray-300"}

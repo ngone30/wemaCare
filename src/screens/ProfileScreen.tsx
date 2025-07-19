@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 // import QRCode from 'react-native-qrcode-svg'; // Package not available
 import { useAuthStore } from '../state/authStore';
 import { cn } from '../utils/cn';
+import AppHeader from '../components/AppHeader';
 
 interface ProfileScreenProps {
   onBack: () => void;
@@ -51,28 +52,24 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <AppHeader 
+        title="Medical Profile"
+        showBackButton
+        onBack={onBack}
+        rightComponent={
+          <Pressable
+            style={{ padding: 8 }}
+            onPress={onEditProfile}
+          >
+            <Ionicons name="create-outline" size={24} color="#3B82F6" />
+          </Pressable>
+        }
+      />
       <View className="flex-1">
-        {/* Header */}
-        <View className="px-6 py-4 border-b border-gray-200">
-          <View className="flex-row items-center">
-            <Pressable
-              className="mr-4 p-2 -ml-2"
-              onPress={onBack}
-            >
-              <Ionicons name="arrow-back" size={24} color="#374151" />
-            </Pressable>
-            <View className="flex-1">
-              <Text className="text-2xl font-bold text-gray-900">Medical Profile</Text>
-              <Text className="text-gray-600">Your health information</Text>
-            </View>
-            <Pressable
-              className="p-2"
-              onPress={onEditProfile}
-            >
-              <Ionicons name="create-outline" size={24} color="#3B82F6" />
-            </Pressable>
-          </View>
+        {/* Subtitle */}
+        <View className="px-6 py-2 border-b border-gray-200">
+          <Text className="text-gray-600">Your health information</Text>
         </View>
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -344,6 +341,6 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

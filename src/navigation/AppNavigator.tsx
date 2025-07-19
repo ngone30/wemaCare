@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../state/authStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 
+// Components
+import AppFooter from '../components/AppFooter';
+
 // Screens
 import AuthScreen from '../screens/AuthScreen';
 import MedicalProfileScreen from '../screens/MedicalProfileScreen';
@@ -69,9 +72,14 @@ export default function AppNavigator() {
   }
 
   const renderCurrentScreen = () => {
+    const mainScreens = ['home', 'symptom-input', 'appointments', 'messages', 'profile'];
+    const showFooter = mainScreens.includes(currentScreen);
+
+    let screenContent;
+    
     switch (currentScreen) {
       case 'symptom-input':
-        return (
+        screenContent = (
           <SymptomInputScreen
             onAnalysisComplete={(symptoms, analysis) => {
               setSymptomsData({ symptoms, analysis });
@@ -80,9 +88,10 @@ export default function AppNavigator() {
             onBack={() => setCurrentScreen('home')}
           />
         );
+        break;
 
       case 'recommendations':
-        return symptomsData ? (
+        screenContent = symptomsData ? (
           <RecommendationsScreen
             symptoms={symptomsData.symptoms}
             analysis={symptomsData.analysis}
@@ -106,9 +115,10 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
 
       case 'doctor-detail':
-        return selectedDoctor ? (
+        screenContent = selectedDoctor ? (
           <DoctorDetailScreen
             doctor={selectedDoctor}
             onBack={() => {
@@ -135,9 +145,10 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
 
       case 'chat':
-        return chatDoctorId ? (
+        screenContent = chatDoctorId ? (
           <ChatScreen
             doctorId={chatDoctorId}
             onBack={() => {
@@ -160,17 +171,19 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
 
       case 'profile':
-        return (
+        screenContent = (
           <ProfileScreen
             onBack={() => setCurrentScreen('home')}
             onEditProfile={() => setShowMedicalProfile(true)}
           />
         );
+        break;
 
       case 'messages':
-        return (
+        screenContent = (
           <MessagesScreen
             onBack={() => setCurrentScreen('home')}
             onSelectConversation={(doctorId) => {
@@ -179,10 +192,11 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
 
       case 'appointments':
         console.log('Rendering appointments screen');
-        return (
+        screenContent = (
           <AppointmentsScreen
             onBack={() => {
               console.log('Appointments back button - going to home');
@@ -194,9 +208,10 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
 
       default:
-        return (
+        screenContent = (
           <HomeScreen
             onStartSymptomInput={() => setCurrentScreen('symptom-input')}
             onViewProfile={() => setCurrentScreen('profile')}
@@ -208,7 +223,32 @@ export default function AppNavigator() {
             }}
           />
         );
+        break;
     }
+
+    if (showFooter) {
+      return (
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
+            {screenContent}
+          </View>
+          <AppFooter 
+            currentScreen={currentScreen} 
+            onNavigate={(screen) => {
+              setCurrentScreen(screen);
+              // Reset navigation state when navigating to main screens
+              if (screen === 'home') {
+                setSymptomsData(null);
+                setSelectedDoctor(null);
+                setChatDoctorId(null);
+              }
+            }} 
+          />
+        </View>
+      );
+    }
+
+    return screenContent;
   };
 
   return renderCurrentScreen();

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
+import AppHeader from '../components/AppHeader';
 
 interface HomeScreenProps {
   onStartSymptomInput: () => void;
@@ -104,24 +105,33 @@ Generated: ${new Date().toLocaleString()}
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="flex-1">
-        {/* Header */}
-        <View className="bg-white px-6 pt-4 pb-6 shadow-sm">
-          {/* App Brand */}
-          <View className="flex-row items-center justify-center mb-4">
-            <View className="bg-blue-500 rounded-full p-2 mr-3">
-              <Ionicons name="medical" size={20} color="white" />
-            </View>
-            <Text className="text-xl font-bold text-blue-600">HealthAI</Text>
-            <Text className="text-sm text-gray-500 ml-2">v1.0</Text>
+    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+      <AppHeader 
+        title="HealthAI"
+        rightComponent={
+          <View style={{ alignItems: 'center' }}>
+            <Pressable
+              style={{
+                backgroundColor: '#F3F4F6',
+                borderRadius: 20,
+                padding: 12,
+                marginBottom: 4
+              }}
+              onPress={onViewProfile}
+            >
+              <Ionicons name="person-outline" size={24} color="#374151" />
+            </Pressable>
+            <Text style={{ fontSize: 11, color: '#6B7280' }}>Profile</Text>
           </View>
-          
-          {/* User Greeting */}
+        }
+      />
+      <View className="flex-1">
+        {/* Welcome Section */}
+        <View className="bg-white px-6 py-4 shadow-sm">
           <View className="flex-row justify-between items-center">
             <View className="flex-1">
-              <Text className="text-2xl font-bold text-gray-900">
-                Hello, {user?.name?.split(' ')[0] || 'User'}! 👋
+              <Text className="text-xl font-bold text-gray-900">
+                Hello, {user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'}! 👋
               </Text>
               <Text className="text-gray-600 mt-1">
                 How are you feeling today?
@@ -138,16 +148,6 @@ Generated: ${new Date().toLocaleString()}
                   </Text>
                 </View>
               </View>
-            </View>
-            
-            <View className="items-center">
-              <Pressable
-                className="bg-gray-100 rounded-full p-3 mb-2"
-                onPress={onViewProfile}
-              >
-                <Ionicons name="person-outline" size={24} color="#374151" />
-              </Pressable>
-              <Text className="text-xs text-gray-500">Profile</Text>
             </View>
           </View>
         </View>
@@ -491,6 +491,6 @@ Generated: ${new Date().toLocaleString()}
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

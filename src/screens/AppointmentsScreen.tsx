@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
 import { Appointment } from '../types/healthcare';
+import AppHeader from '../components/AppHeader';
 
 interface AppointmentsScreenProps {
   onBack: () => void;
@@ -105,25 +106,29 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        {/* Simple Header */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' }}>
+      <AppHeader 
+        title="Appointments"
+        showBackButton
+        onBack={handleBackPress}
+        rightComponent={
           <Pressable
-            style={{ padding: 8, marginRight: 12 }}
-            onPress={handleBackPress}
+            style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8 }}
+            onPress={handleCalendarPress}
           >
-            <Ionicons name="arrow-back" size={24} color="#374151" />
+            <Ionicons name="calendar-outline" size={24} color="#3B82F6" />
           </Pressable>
-          
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827' }}>
-              Appointments
-            </Text>
-            <Text style={{ color: '#6B7280' }}>
-              {appointments.length} total appointments
-            </Text>
-          </View>
-          
+        }
+      />
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Appointment count */}
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' }}>
+          <Text style={{ color: '#6B7280' }}>
+            {appointments.length} total appointments
+          </Text>
+        </View>
+        
+        {/* Simplified placeholder for removed header code */}
+        <View style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8, visibility: 'hidden' }}>
           <Pressable
             style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8 }}
             onPress={handleCalendarPress}
