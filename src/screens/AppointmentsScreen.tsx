@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
 import { Appointment } from '../types/healthcare';
-import { cn } from '../utils/cn';
+
 
 interface AppointmentsScreenProps {
   onBack: () => void;
@@ -133,46 +133,28 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
         <View className="px-6 py-4 border-b border-gray-200 bg-white">
           <View className="flex-row bg-gray-100 rounded-xl p-1">
             <Pressable
-              className={cn(
-                "flex-1 py-2 px-4 rounded-lg items-center",
-                selectedTab === 'upcoming' ? "bg-white shadow-sm" : ""
-              )}
+              className={selectedTab === 'upcoming' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => setSelectedTab('upcoming')}
             >
-              <Text className={cn(
-                "font-medium",
-                selectedTab === 'upcoming' ? "text-blue-600" : "text-gray-600"
-              )}>
+              <Text className={selectedTab === 'upcoming' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 Upcoming ({getUpcomingCount()})
               </Text>
             </Pressable>
             
             <Pressable
-              className={cn(
-                "flex-1 py-2 px-4 rounded-lg items-center",
-                selectedTab === 'past' ? "bg-white shadow-sm" : ""
-              )}
+              className={selectedTab === 'past' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => setSelectedTab('past')}
             >
-              <Text className={cn(
-                "font-medium",
-                selectedTab === 'past' ? "text-blue-600" : "text-gray-600"
-              )}>
+              <Text className={selectedTab === 'past' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 Past ({getPastCount()})
               </Text>
             </Pressable>
             
             <Pressable
-              className={cn(
-                "flex-1 py-2 px-4 rounded-lg items-center",
-                selectedTab === 'all' ? "bg-white shadow-sm" : ""
-              )}
+              className={selectedTab === 'all' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => setSelectedTab('all')}
             >
-              <Text className={cn(
-                "font-medium",
-                selectedTab === 'all' ? "text-blue-600" : "text-gray-600"
-              )}>
+              <Text className={selectedTab === 'all' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 All ({appointments.length})
               </Text>
             </Pressable>
@@ -226,12 +208,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
                         </Text>
                       </View>
                       
-                      <View className={cn(
-                        "px-3 py-1 rounded-full border",
-                        statusColors.bg,
-                        statusColors.border
-                      )}>
-                        <Text className={cn("text-sm font-medium", statusColors.text)}>
+                      <View className={`px-3 py-1 rounded-full border ${statusColors.bg} ${statusColors.border}`}>
+                        <Text className={`text-sm font-medium ${statusColors.text}`}>
                           {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                         </Text>
                       </View>

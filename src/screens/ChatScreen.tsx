@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../types/healthcare';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
 import { useAuthStore } from '../state/authStore';
-import { cn } from '../utils/cn';
+
 
 interface ChatScreenProps {
   doctorId: string;
@@ -186,16 +186,11 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                       </View>
                     )}
                     
-                    <View className={cn(
-                      "flex-row",
-                      isCurrentUser ? "justify-end" : "justify-start"
-                    )}>
-                      <View className={cn(
-                        "max-w-[80%] rounded-2xl px-4 py-3",
-                        isCurrentUser 
-                          ? "bg-blue-500 rounded-br-md" 
-                          : "bg-white rounded-bl-md shadow-sm border border-gray-100"
-                      )}>
+                    <View className={isCurrentUser ? "flex-row justify-end" : "flex-row justify-start"}>
+                      <View className={isCurrentUser 
+                        ? "max-w-[80%] rounded-2xl px-4 py-3 bg-blue-500 rounded-br-md" 
+                        : "max-w-[80%] rounded-2xl px-4 py-3 bg-white rounded-bl-md shadow-sm border border-gray-100"
+                      }>
                         {message.type === 'appointment' && (
                           <View className="flex-row items-center mb-2">
                             <Ionicons 
@@ -203,26 +198,17 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                               size={16} 
                               color={isCurrentUser ? "white" : "#3B82F6"} 
                             />
-                            <Text className={cn(
-                              "text-sm font-medium ml-1",
-                              isCurrentUser ? "text-blue-100" : "text-blue-600"
-                            )}>
+                            <Text className={isCurrentUser ? "text-sm font-medium ml-1 text-blue-100" : "text-sm font-medium ml-1 text-blue-600"}>
                               Appointment Booking
                             </Text>
                           </View>
                         )}
                         
-                        <Text className={cn(
-                          "text-base leading-relaxed",
-                          isCurrentUser ? "text-white" : "text-gray-900"
-                        )}>
+                        <Text className={isCurrentUser ? "text-base leading-relaxed text-white" : "text-base leading-relaxed text-gray-900"}>
                           {message.content}
                         </Text>
                         
-                        <Text className={cn(
-                          "text-xs mt-2",
-                          isCurrentUser ? "text-blue-100" : "text-gray-500"
-                        )}>
+                        <Text className={isCurrentUser ? "text-xs mt-2 text-blue-100" : "text-xs mt-2 text-gray-500"}>
                           {formatTime(message.timestamp)}
                         </Text>
                       </View>
@@ -249,10 +235,7 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
             </View>
             
             <Pressable
-              className={cn(
-                "rounded-full p-3",
-                messageText.trim() ? "bg-blue-500" : "bg-gray-300"
-              )}
+              className={messageText.trim() ? "rounded-full p-3 bg-blue-500" : "rounded-full p-3 bg-gray-300"}
               onPress={handleSendMessage}
               disabled={!messageText.trim()}
             >
