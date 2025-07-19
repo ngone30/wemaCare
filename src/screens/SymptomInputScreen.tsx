@@ -13,9 +13,10 @@ import { cn } from '../utils/cn';
 
 interface SymptomInputScreenProps {
   onAnalysisComplete: (symptoms: SymptomInput[], analysis: string) => void;
+  onBack: () => void;
 }
 
-export default function SymptomInputScreen({ onAnalysisComplete }: SymptomInputScreenProps) {
+export default function SymptomInputScreen({ onAnalysisComplete, onBack }: SymptomInputScreenProps) {
   const { user } = useAuthStore();
   const [symptoms, setSymptoms] = useState<SymptomInput[]>([]);
   const [textInput, setTextInput] = useState('');
@@ -253,7 +254,17 @@ Remember: This is for educational purposes only and not a replacement for profes
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 border-b border-gray-200">
-          <Text className="text-2xl font-bold text-gray-900 mb-2">Describe Your Symptoms</Text>
+          <View className="flex-row items-center mb-2">
+            <Pressable
+              className="mr-4 p-2 -ml-2"
+              onPress={onBack}
+            >
+              <Ionicons name="arrow-back" size={24} color="#374151" />
+            </Pressable>
+            <View className="flex-1">
+              <Text className="text-2xl font-bold text-gray-900">Describe Your Symptoms</Text>
+            </View>
+          </View>
           <Text className="text-gray-600">Add your symptoms using text, voice, or images</Text>
         </View>
 

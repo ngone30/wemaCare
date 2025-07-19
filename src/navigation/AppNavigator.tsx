@@ -77,6 +77,7 @@ export default function AppNavigator() {
               setSymptomsData({ symptoms, analysis });
               setCurrentScreen('recommendations');
             }}
+            onBack={() => setCurrentScreen('home')}
           />
         );
 

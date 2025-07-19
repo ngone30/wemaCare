@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable, Share, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
@@ -23,6 +23,7 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { user, logout } = useAuthStore();
   const { recommendations, appointments, conversations } = useHealthcareStore();
+  const [showQR, setShowQR] = useState(false);
 
   const upcomingAppointments = appointments
     .filter(apt => apt.status === 'confirmed' || apt.status === 'pending')
@@ -31,6 +32,76 @@ export default function HomeScreen({
   const recentConversations = conversations
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 3);
+
+  const generateMedicalCardData = () => {
+    if (!user) return '';
+    
+    // Include past diagnoses from completed appointments
+    const pastDiagnoses = appointments
+      .filter(apt => apt.status === 'completed')
+      .map(apt => ({
+        date: apt.date,
+        symptoms: apt.symptoms,
+        notes: apt.notes,
+        doctorId: apt.doctorId
+      }));
+
+    return JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      dateOfBirth: user.medicalProfile.dateOfBirth,
+      bloodType: user.medicalProfile.bloodType,
+      allergies: user.medicalProfile.allergies,
+      medications: user.medicalProfile.medications,
+      medicalConditions: user.medicalProfile.medicalConditions,
+      emergencyContact: user.medicalProfile.emergencyContact,
+      insurance: user.medicalProfile.insurance,
+      pastDiagnoses,
+      recentAppointments: appointments.slice(0, 3),
+      timestamp: new Date().toISOString(),
+      type: 'healthai_medical_card',
+      version: '1.0'
+    });
+  };
+
+  const shareMedicalCard = async () => {
+    if (!user) return;
+    
+    try {
+      const pastDiagnoses = appointments
+        .filter(apt => apt.status === 'completed')
+        .map(apt => `${apt.date}: ${apt.symptoms}`)
+        .slice(0, 3);
+
+      const profileData = `
+🏥 HealthAI Medical Card
+👤 Name: ${user.name}
+📧 Email: ${user.email}
+🎂 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
+🩸 Blood Type: ${user.medicalProfile.bloodType || 'Not provided'}
+⚠️ Allergies: ${user.medicalProfile.allergies.join(', ') || 'None listed'}
+💊 Medications: ${user.medicalProfile.medications.join(', ') || 'None listed'}
+🏥 Conditions: ${user.medicalProfile.medicalConditions.join(', ') || 'None listed'}
+📞 Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.phone})
+🏥 Insurance: ${user.medicalProfile.insurance.provider || 'Not provided'}
+
+📋 Recent Diagnoses:
+${pastDiagnoses.length > 0 ? pastDiagnoses.join('\n') : 'No past diagnoses recorded'}
+
+🔒 QR Code Data: ${generateMedicalCardData().substring(0, 50)}...
+
+Generated: ${new Date().toLocaleString()}
+      `.trim();
+
+      await Share.share({
+        message: profileData,
+        title: 'Medical Card - HealthAI'
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share medical card');
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -57,8 +128,62 @@ export default function HomeScreen({
         </View>
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          {/* Quick Actions */}
+          {/* Medical QR Code */}
           <View className="px-6 py-6">
+            <Text className="text-xl font-bold text-gray-900 mb-4">
+              Medical QR Code
+            </Text>
+            
+            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+              <View className="items-center">
+                {showQR ? (
+                  <View className="bg-white p-6 rounded-xl shadow-lg mb-4 border border-gray-200">
+                    <View className="w-48 h-48 bg-gray-900 rounded-lg items-center justify-center mb-3">
+                      <Ionicons name="qr-code" size={120} color="white" />
+                    </View>
+                    <Text className="text-sm text-gray-700 text-center font-medium">
+                      Medical Card QR Code
+                    </Text>
+                    <Text className="text-xs text-gray-500 text-center mt-1">
+                      Scan to access medical information
+                    </Text>
+                  </View>
+                ) : (
+                  <View className="bg-white p-6 rounded-xl shadow-sm mb-4 items-center justify-center" style={{ width: 180, height: 180 }}>
+                    <Ionicons name="qr-code-outline" size={64} color="#9CA3AF" />
+                    <Text className="text-gray-500 mt-2 text-center">
+                      Tap to show QR code
+                    </Text>
+                  </View>
+                )}
+
+                <View className="flex-row space-x-3">
+                  <Pressable
+                    className="bg-blue-500 rounded-xl px-4 py-2"
+                    onPress={() => setShowQR(!showQR)}
+                  >
+                    <Text className="text-white font-medium">
+                      {showQR ? 'Hide QR' : 'Show QR'}
+                    </Text>
+                  </Pressable>
+                  
+                  <Pressable
+                    className="bg-green-500 rounded-xl px-4 py-2"
+                    onPress={shareMedicalCard}
+                  >
+                    <Text className="text-white font-medium">Share Card</Text>
+                  </Pressable>
+                </View>
+                
+                <Text className="text-blue-700 text-sm text-center mt-3 px-2">
+                  Let doctors scan this QR code for instant access to your medical information
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Quick Actions */}
+          <View className="px-6 py-4">
             <Text className="text-xl font-bold text-gray-900 mb-4">
               Quick Actions
             </Text>
@@ -197,13 +322,36 @@ export default function HomeScreen({
             </View>
           )}
 
+          {/* For Healthcare Providers */}
+          <View className="px-6 py-4">
+            <Text className="text-xl font-bold text-gray-900 mb-4">
+              For Healthcare Providers
+            </Text>
+            
+            <View className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <View className="flex-row items-start">
+                <View className="bg-green-500 rounded-full p-2 mr-3">
+                  <Ionicons name="medical-outline" size={20} color="white" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-green-900 font-semibold mb-2">
+                    Scan Patient QR Code
+                  </Text>
+                  <Text className="text-green-800 leading-relaxed">
+                    Healthcare providers can scan the patient's QR code above to instantly access their medical history, current medications, allergies, and recent appointments.
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
           {/* Health Tips */}
           <View className="px-6 py-4">
             <Text className="text-xl font-bold text-gray-900 mb-4">
               Health Tips
             </Text>
             
-            <View className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6">
+            <View className="bg-blue-500 rounded-xl p-6">
               <View className="flex-row items-start">
                 <View className="bg-white/20 rounded-full p-2 mr-3">
                   <Ionicons name="bulb-outline" size={24} color="white" />
