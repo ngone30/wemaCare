@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
 import AppNavigator from "./src/navigation/AppNavigator";
 
 /*
@@ -26,7 +27,9 @@ const openai_api_key = Constants.expoConfig.extra.apikey;
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
       <StatusBar style="auto" />
     </SafeAreaProvider>
   );

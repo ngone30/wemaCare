@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../state/authStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
@@ -18,8 +16,6 @@ import ProfileScreen from '../screens/ProfileScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import AppointmentsScreen from '../screens/AppointmentsScreen';
 
-const Stack = createNativeStackNavigator();
-
 export default function AppNavigator() {
   const { isAuthenticated, user, ensureMedicalProfile } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -31,6 +27,7 @@ export default function AppNavigator() {
     }
     setIsInitialized(true);
   }, [isAuthenticated, user, ensureMedicalProfile]);
+
   const [showMedicalProfile, setShowMedicalProfile] = useState(false);
   const [currentScreen, setCurrentScreen] = useState('home');
   const [selectedDoctor, setSelectedDoctor] = useState<RecommendedDoctor | null>(null);
@@ -57,31 +54,17 @@ export default function AppNavigator() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Auth" component={AuthScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
+    return <AuthScreen />;
   }
 
   if (needsMedicalProfile || showMedicalProfile) {
     return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="MedicalProfile">
-            {() => (
-              <MedicalProfileScreen 
-                onComplete={() => {
-                  setShowMedicalProfile(false);
-                  setCurrentScreen('home');
-                }}
-              />
-            )}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <MedicalProfileScreen 
+        onComplete={() => {
+          setShowMedicalProfile(false);
+          setCurrentScreen('home');
+        }}
+      />
     );
   }
 
@@ -223,13 +206,5 @@ export default function AppNavigator() {
     }
   };
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Main">
-          {() => renderCurrentScreen()}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return renderCurrentScreen();
 }
