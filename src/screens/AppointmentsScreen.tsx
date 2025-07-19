@@ -83,6 +83,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
   console.log('Total appointments:', appointments.length);
   console.log('Selected tab:', selectedTab);
   console.log('Filtered appointments:', filteredAppointments.length);
+  console.log('Appointments:', appointments.map(apt => ({ date: apt.date, status: apt.status, time: apt.time })));
 
   // Calendar helper functions
   const getCurrentMonth = () => {
@@ -126,16 +127,29 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
       days.push(
         <Pressable
           key={day}
-          className={`w-10 h-10 items-center justify-center rounded-lg ${
-            hasAppointments ? 'bg-blue-500' : 'bg-gray-100'
+          className={`w-10 h-10 items-center justify-center rounded-lg m-1 ${
+            hasAppointments ? 'bg-blue-500 shadow-md' : 'bg-gray-100'
           }`}
           onPress={() => {
             if (hasAppointments) {
+              const appointmentDetails = dayAppointments.map(apt => {
+                const doctorInfo = getDoctorInfo(apt.doctorId);
+                return `• ${apt.time} - ${getDoctorName(apt.doctorId)}\n  ${doctorInfo.specialty}\n  Status: ${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}\n  ${apt.symptoms}\n`;
+              }).join('\n');
+              
               Alert.alert(
-                `Appointments on ${month + 1}/${day}/${year}`,
-                dayAppointments.map(apt => 
-                  `• ${apt.time} - ${getDoctorName(apt.doctorId)} (${apt.status})`
-                ).join('\n')
+                `📅 ${month + 1}/${day}/${year} - ${dayAppointments.length} Appointment${dayAppointments.length > 1 ? 's' : ''}`,
+                appointmentDetails,
+                [
+                  { text: 'Close', style: 'cancel' },
+                  { text: 'View All Appointments', onPress: () => setShowCalendar(false) }
+                ]
+              );
+            } else {
+              Alert.alert(
+                'No Appointments',
+                `No appointments scheduled for ${month + 1}/${day}/${year}`,
+                [{ text: 'OK', style: 'default' }]
               );
             }
           }}
@@ -145,8 +159,13 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
           }`}>
             {day}
           </Text>
-          {hasAppointments && (
-            <View className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
+          {hasAppointments && dayAppointments.length > 1 && (
+            <View className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full items-center justify-center">
+              <Text className="text-white text-xs font-bold">{dayAppointments.length}</Text>
+            </View>
+          )}
+          {hasAppointments && dayAppointments.length === 1 && (
+            <View className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full" />
           )}
         </Pressable>
       );
@@ -170,13 +189,19 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
           {days}
         </View>
         
-        <View className="flex-row items-center justify-center mt-4 space-x-4">
+        <View className="flex-row items-center justify-center mt-6 space-x-6">
           <View className="flex-row items-center">
             <View className="w-4 h-4 bg-blue-500 rounded mr-2" />
             <Text className="text-sm text-gray-600">Has Appointments</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="w-3 h-3 bg-red-500 rounded-full mr-2" />
+            <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+            <Text className="text-sm text-gray-600">Single</Text>
+          </View>
+          <View className="flex-row items-center">
+            <View className="w-4 h-4 bg-red-500 rounded-full items-center justify-center mr-2">
+              <Text className="text-white text-xs font-bold">2+</Text>
+            </View>
             <Text className="text-sm text-gray-600">Multiple</Text>
           </View>
         </View>
@@ -281,11 +306,14 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
 
         {/* Tab Navigation */}
         <View className="px-6 py-4 border-b border-gray-200 bg-white">
+          <Text className="text-sm text-gray-600 mb-3 text-center">
+            Showing {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? 's' : ''} • Tap calendar icon to view monthly view
+          </Text>
           <View className="flex-row bg-gray-100 rounded-xl p-1">
             <Pressable
               className={selectedTab === 'upcoming' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => {
-                console.log('Switching to upcoming tab');
+                console.log('Switching to upcoming tab, count:', getUpcomingCount());
                 setSelectedTab('upcoming');
               }}
             >
@@ -297,7 +325,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             <Pressable
               className={selectedTab === 'past' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => {
-                console.log('Switching to past tab');
+                console.log('Switching to past tab, count:', getPastCount());
                 setSelectedTab('past');
               }}
             >
@@ -309,7 +337,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             <Pressable
               className={selectedTab === 'all' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
               onPress={() => {
-                console.log('Switching to all tab');
+                console.log('Switching to all tab, count:', appointments.length);
                 setSelectedTab('all');
               }}
             >
@@ -439,19 +467,21 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
               {/* Calendar Header */}
               <View className="px-6 py-4 border-b border-gray-200">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-xl font-bold text-gray-900">
-                    Appointment Calendar
-                  </Text>
+                  <View className="flex-1">
+                    <Text className="text-xl font-bold text-gray-900">
+                      Appointment Calendar
+                    </Text>
+                    <Text className="text-gray-600 mt-1">
+                      📅 Tap highlighted dates • 🔵 Has appointments • 🟢 Single • 🔴 Multiple
+                    </Text>
+                  </View>
                   <Pressable 
-                    className="p-2 -mr-2"
+                    className="p-2 bg-gray-100 rounded-full"
                     onPress={() => setShowCalendar(false)}
                   >
-                    <Ionicons name="close" size={24} color="#6B7280" />
+                    <Ionicons name="close" size={20} color="#6B7280" />
                   </Pressable>
                 </View>
-                <Text className="text-gray-600 mt-1">
-                  Tap on highlighted dates to view appointments
-                </Text>
               </View>
 
               {/* Calendar Content */}
@@ -511,9 +541,24 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
                     nextWeek.setDate(today.getDate() + 7);
                     return aptDate >= today && aptDate <= nextWeek;
                   }).length === 0 && (
-                    <Text className="text-gray-500 text-center py-4">
-                      No appointments in the next 7 days
-                    </Text>
+                    <View className="text-center py-6">
+                      <Text className="text-gray-500 mb-4">
+                        No appointments in the next 7 days
+                      </Text>
+                      <Pressable 
+                        className="bg-blue-500 rounded-xl py-3 px-6 self-center"
+                        onPress={() => {
+                          setShowCalendar(false);
+                          Alert.alert(
+                            'Book Appointment',
+                            'To book a new appointment, go to the main screen and use "Check Symptoms" to get AI recommendations for healthcare providers.',
+                            [{ text: 'Got it', style: 'default' }]
+                          );
+                        }}
+                      >
+                        <Text className="text-white font-semibold">Book New Appointment</Text>
+                      </Pressable>
+                    </View>
                   )}
                 </View>
               </ScrollView>
