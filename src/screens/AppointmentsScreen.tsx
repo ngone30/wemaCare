@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, Alert, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
@@ -14,6 +14,7 @@ interface AppointmentsScreenProps {
 export default function AppointmentsScreen({ onBack, onStartChat }: AppointmentsScreenProps) {
   const { appointments, bookAppointment } = useHealthcareStore();
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming');
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Initialize sample appointments if none exist
   React.useEffect(() => {
@@ -34,17 +35,27 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
           id: 'sample2',
           doctorId: '2',
           patientId: 'current-user',
-          date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           time: '02:30 PM',
           status: 'confirmed' as const,
           symptoms: 'Follow-up consultation for blood work results',
           notes: 'Bring recent lab results and medication list'
+        },
+        {
+          id: 'sample3',
+          doctorId: '3',
+          patientId: 'current-user',
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          time: '11:00 AM',
+          status: 'pending' as const,
+          symptoms: 'Dermatology consultation for skin condition',
+          notes: 'Initial consultation'
         }
       ];
       
       sampleAppointments.forEach(apt => bookAppointment(apt));
     }
-  }, []);
+  }, [appointments.length, bookAppointment]);
 
   const now = new Date();
   
@@ -72,6 +83,106 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
   console.log('Total appointments:', appointments.length);
   console.log('Selected tab:', selectedTab);
   console.log('Filtered appointments:', filteredAppointments.length);
+
+  // Calendar helper functions
+  const getCurrentMonth = () => {
+    const now = new Date();
+    return {
+      year: now.getFullYear(),
+      month: now.getMonth(),
+      monthName: now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    };
+  };
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const getAppointmentsForDate = (date: string) => {
+    return appointments.filter(apt => apt.date === date);
+  };
+
+  const renderCalendar = () => {
+    const { year, month, monthName } = getCurrentMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDay = getFirstDayOfMonth(year, month);
+    const days = [];
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<View key={`empty-${i}`} className="w-10 h-10" />);
+    }
+
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayAppointments = getAppointmentsForDate(dateString);
+      const hasAppointments = dayAppointments.length > 0;
+
+      days.push(
+        <Pressable
+          key={day}
+          className={`w-10 h-10 items-center justify-center rounded-lg ${
+            hasAppointments ? 'bg-blue-500' : 'bg-gray-100'
+          }`}
+          onPress={() => {
+            if (hasAppointments) {
+              Alert.alert(
+                `Appointments on ${month + 1}/${day}/${year}`,
+                dayAppointments.map(apt => 
+                  `• ${apt.time} - ${getDoctorName(apt.doctorId)} (${apt.status})`
+                ).join('\n')
+              );
+            }
+          }}
+        >
+          <Text className={`text-sm font-medium ${
+            hasAppointments ? 'text-white' : 'text-gray-700'
+          }`}>
+            {day}
+          </Text>
+          {hasAppointments && (
+            <View className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
+          )}
+        </Pressable>
+      );
+    }
+
+    return (
+      <View>
+        <Text className="text-lg font-semibold text-center mb-4">{monthName}</Text>
+        
+        {/* Day headers */}
+        <View className="flex-row justify-between mb-2">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <Text key={day} className="w-10 text-center text-gray-600 font-medium text-sm">
+              {day}
+            </Text>
+          ))}
+        </View>
+        
+        {/* Calendar grid */}
+        <View className="flex-row flex-wrap">
+          {days}
+        </View>
+        
+        <View className="flex-row items-center justify-center mt-4 space-x-4">
+          <View className="flex-row items-center">
+            <View className="w-4 h-4 bg-blue-500 rounded mr-2" />
+            <Text className="text-sm text-gray-600">Has Appointments</Text>
+          </View>
+          <View className="flex-row items-center">
+            <View className="w-3 h-3 bg-red-500 rounded-full mr-2" />
+            <Text className="text-sm text-gray-600">Multiple</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   const getDoctorName = (doctorId: string) => {
     const doctor = getDoctorById(doctorId);
@@ -161,11 +272,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             </View>
             <Pressable 
               className="p-2 bg-blue-50 rounded-lg"
-              onPress={() => Alert.alert(
-                'Calendar Integration', 
-                'Calendar features:\n\n• View appointments by date\n• Sync with device calendar\n• Set appointment reminders\n• Export appointments\n\nComing soon in the next update!',
-                [{ text: 'Got it', style: 'default' }]
-              )}
+              onPress={() => setShowCalendar(true)}
             >
               <Ionicons name="calendar-outline" size={24} color="#3B82F6" />
             </Pressable>
@@ -177,7 +284,10 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
           <View className="flex-row bg-gray-100 rounded-xl p-1">
             <Pressable
               className={selectedTab === 'upcoming' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
-              onPress={() => setSelectedTab('upcoming')}
+              onPress={() => {
+                console.log('Switching to upcoming tab');
+                setSelectedTab('upcoming');
+              }}
             >
               <Text className={selectedTab === 'upcoming' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 Upcoming ({getUpcomingCount()})
@@ -186,7 +296,10 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             
             <Pressable
               className={selectedTab === 'past' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
-              onPress={() => setSelectedTab('past')}
+              onPress={() => {
+                console.log('Switching to past tab');
+                setSelectedTab('past');
+              }}
             >
               <Text className={selectedTab === 'past' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 Past ({getPastCount()})
@@ -195,7 +308,10 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             
             <Pressable
               className={selectedTab === 'all' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
-              onPress={() => setSelectedTab('all')}
+              onPress={() => {
+                console.log('Switching to all tab');
+                setSelectedTab('all');
+              }}
             >
               <Text className={selectedTab === 'all' ? "font-medium text-blue-600" : "font-medium text-gray-600"}>
                 All ({appointments.length})
@@ -311,6 +427,99 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             </View>
           </ScrollView>
         )}
+
+        {/* Calendar Modal */}
+        <Modal
+          visible={showCalendar}
+          animationType="slide"
+          presentationStyle="pageSheet"
+        >
+          <SafeAreaView className="flex-1 bg-white">
+            <View className="flex-1">
+              {/* Calendar Header */}
+              <View className="px-6 py-4 border-b border-gray-200">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-xl font-bold text-gray-900">
+                    Appointment Calendar
+                  </Text>
+                  <Pressable 
+                    className="p-2 -mr-2"
+                    onPress={() => setShowCalendar(false)}
+                  >
+                    <Ionicons name="close" size={24} color="#6B7280" />
+                  </Pressable>
+                </View>
+                <Text className="text-gray-600 mt-1">
+                  Tap on highlighted dates to view appointments
+                </Text>
+              </View>
+
+              {/* Calendar Content */}
+              <ScrollView className="flex-1 px-6 py-6">
+                {renderCalendar()}
+                
+                {/* Upcoming Appointments List */}
+                <View className="mt-8">
+                  <Text className="text-lg font-semibold text-gray-900 mb-4">
+                    Next 7 Days
+                  </Text>
+                  
+                  {appointments
+                    .filter(apt => {
+                      const aptDate = new Date(apt.date);
+                      const today = new Date();
+                      const nextWeek = new Date();
+                      nextWeek.setDate(today.getDate() + 7);
+                      return aptDate >= today && aptDate <= nextWeek;
+                    })
+                    .slice(0, 3)
+                    .map((appointment) => (
+                      <View key={appointment.id} className="bg-gray-50 rounded-xl p-4 mb-3">
+                        <View className="flex-row justify-between items-start">
+                          <View className="flex-1">
+                            <Text className="text-gray-900 font-semibold">
+                              {getDoctorName(appointment.doctorId)}
+                            </Text>
+                            <Text className="text-gray-600 mt-1">
+                              {new Date(appointment.date).toLocaleDateString('en-US', { 
+                                weekday: 'long', 
+                                month: 'short', 
+                                day: 'numeric' 
+                              })} at {appointment.time}
+                            </Text>
+                            <Text className="text-gray-700 text-sm mt-1">
+                              {appointment.symptoms}
+                            </Text>
+                          </View>
+                          <View className={`px-2 py-1 rounded-full ${
+                            appointment.status === 'confirmed' ? 'bg-green-100' : 'bg-yellow-100'
+                          }`}>
+                            <Text className={`text-xs font-medium ${
+                              appointment.status === 'confirmed' ? 'text-green-800' : 'text-yellow-800'
+                            }`}>
+                              {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    ))}
+                  
+                  {appointments.filter(apt => {
+                    const aptDate = new Date(apt.date);
+                    const today = new Date();
+                    const nextWeek = new Date();
+                    nextWeek.setDate(today.getDate() + 7);
+                    return aptDate >= today && aptDate <= nextWeek;
+                  }).length === 0 && (
+                    <Text className="text-gray-500 text-center py-4">
+                      No appointments in the next 7 days
+                    </Text>
+                  )}
+                </View>
+              </ScrollView>
+            </View>
+          </SafeAreaView>
+        </Modal>
       </View>
     </SafeAreaView>
   );
