@@ -14,6 +14,9 @@ import SymptomInputScreen from '../screens/SymptomInputScreen';
 import RecommendationsScreen from '../screens/RecommendationsScreen';
 import DoctorDetailScreen from '../screens/DoctorDetailScreen';
 import ChatScreen from '../screens/ChatScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import MessagesScreen from '../screens/MessagesScreen';
+import AppointmentsScreen from '../screens/AppointmentsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -110,9 +113,9 @@ export default function AppNavigator() {
         ) : (
           <HomeScreen
             onStartSymptomInput={() => setCurrentScreen('symptom-input')}
-            onViewProfile={() => setShowMedicalProfile(true)}
-            onViewAppointments={() => setCurrentScreen('home')}
-            onViewMessages={() => setCurrentScreen('home')}
+            onViewProfile={() => setCurrentScreen('profile')}
+            onViewAppointments={() => setCurrentScreen('appointments')}
+            onViewMessages={() => setCurrentScreen('messages')}
             onSelectDoctor={(doctor) => {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
@@ -139,9 +142,9 @@ export default function AppNavigator() {
         ) : (
           <HomeScreen
             onStartSymptomInput={() => setCurrentScreen('symptom-input')}
-            onViewProfile={() => setShowMedicalProfile(true)}
-            onViewAppointments={() => setCurrentScreen('home')}
-            onViewMessages={() => setCurrentScreen('home')}
+            onViewProfile={() => setCurrentScreen('profile')}
+            onViewAppointments={() => setCurrentScreen('appointments')}
+            onViewMessages={() => setCurrentScreen('messages')}
             onSelectDoctor={(doctor) => {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
@@ -164,12 +167,42 @@ export default function AppNavigator() {
         ) : (
           <HomeScreen
             onStartSymptomInput={() => setCurrentScreen('symptom-input')}
-            onViewProfile={() => setShowMedicalProfile(true)}
-            onViewAppointments={() => setCurrentScreen('home')}
-            onViewMessages={() => setCurrentScreen('home')}
+            onViewProfile={() => setCurrentScreen('profile')}
+            onViewAppointments={() => setCurrentScreen('appointments')}
+            onViewMessages={() => setCurrentScreen('messages')}
             onSelectDoctor={(doctor) => {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
+            }}
+          />
+        );
+
+      case 'profile':
+        return (
+          <ProfileScreen
+            onBack={() => setCurrentScreen('home')}
+            onEditProfile={() => setShowMedicalProfile(true)}
+          />
+        );
+
+      case 'messages':
+        return (
+          <MessagesScreen
+            onBack={() => setCurrentScreen('home')}
+            onSelectConversation={(doctorId) => {
+              setChatDoctorId(doctorId);
+              setCurrentScreen('chat');
+            }}
+          />
+        );
+
+      case 'appointments':
+        return (
+          <AppointmentsScreen
+            onBack={() => setCurrentScreen('home')}
+            onStartChat={(doctorId) => {
+              setChatDoctorId(doctorId);
+              setCurrentScreen('chat');
             }}
           />
         );
@@ -178,9 +211,9 @@ export default function AppNavigator() {
         return (
           <HomeScreen
             onStartSymptomInput={() => setCurrentScreen('symptom-input')}
-            onViewProfile={() => setShowMedicalProfile(true)}
-            onViewAppointments={() => setCurrentScreen('home')}
-            onViewMessages={() => setCurrentScreen('home')}
+            onViewProfile={() => setCurrentScreen('profile')}
+            onViewAppointments={() => setCurrentScreen('appointments')}
+            onViewMessages={() => setCurrentScreen('messages')}
             onSelectDoctor={(doctor) => {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
