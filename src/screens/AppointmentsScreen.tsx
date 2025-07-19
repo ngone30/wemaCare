@@ -16,6 +16,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming');
   const [showCalendar, setShowCalendar] = useState(false);
 
+  console.log('AppointmentsScreen rendered, appointments:', appointments.length);
+
   // Initialize sample appointments if none exist
   React.useEffect(() => {
     if (appointments.length === 0) {
@@ -55,7 +57,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
       
       sampleAppointments.forEach(apt => bookAppointment(apt));
     }
-  }, [appointments.length, bookAppointment]);
+  }, []);
 
   const now = new Date();
   
@@ -273,14 +275,18 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 bg-white">
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1 }}>
         {/* Header */}
-        <View className="px-6 py-4 border-b border-gray-200">
+        <View className="px-6 py-4 border-b border-gray-200 bg-white">
           <View className="flex-row items-center">
             <Pressable
-              className="mr-4 p-2 -ml-2"
-              onPress={onBack}
+              className="mr-4 p-3"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => {
+                console.log('Back button pressed');
+                onBack();
+              }}
             >
               <Ionicons name="arrow-back" size={24} color="#374151" />
             </Pressable>
@@ -296,8 +302,12 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
               )}
             </View>
             <Pressable 
-              className="p-2 bg-blue-50 rounded-lg"
-              onPress={() => setShowCalendar(true)}
+              className="p-3 bg-blue-50 rounded-lg"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => {
+                console.log('Calendar button pressed');
+                setShowCalendar(true);
+              }}
             >
               <Ionicons name="calendar-outline" size={24} color="#3B82F6" />
             </Pressable>
@@ -306,12 +316,24 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
 
         {/* Tab Navigation */}
         <View className="px-6 py-4 border-b border-gray-200 bg-white">
-          <Text className="text-sm text-gray-600 mb-3 text-center">
-            Showing {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? 's' : ''} • Tap calendar icon to view monthly view
-          </Text>
-          <View className="flex-row bg-gray-100 rounded-xl p-1">
+          <View className="mb-3">
+            <Text className="text-sm text-gray-600 text-center">
+              Showing {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? 's' : ''} • Tab selection: {selectedTab}
+            </Text>
+            <Pressable 
+              className="mt-2 bg-yellow-200 p-2 rounded"
+              onPress={() => {
+                console.log('DEBUG: Test button pressed!');
+                Alert.alert('Touch Test', 'Touch events are working correctly!');
+              }}
+            >
+              <Text className="text-center font-semibold">🧪 Test Touch Events</Text>
+            </Pressable>
+          </View>
+          <View className="flex-row bg-gray-100 rounded-xl p-2">
             <Pressable
-              className={selectedTab === 'upcoming' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
+              style={{ flex: 1 }}
+              className={selectedTab === 'upcoming' ? "py-3 px-4 rounded-lg items-center bg-white shadow-sm" : "py-3 px-4 rounded-lg items-center"}
               onPress={() => {
                 console.log('Switching to upcoming tab, count:', getUpcomingCount());
                 setSelectedTab('upcoming');
@@ -323,7 +345,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             </Pressable>
             
             <Pressable
-              className={selectedTab === 'past' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
+              style={{ flex: 1 }}
+              className={selectedTab === 'past' ? "py-3 px-4 rounded-lg items-center bg-white shadow-sm" : "py-3 px-4 rounded-lg items-center"}
               onPress={() => {
                 console.log('Switching to past tab, count:', getPastCount());
                 setSelectedTab('past');
@@ -335,7 +358,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
             </Pressable>
             
             <Pressable
-              className={selectedTab === 'all' ? "flex-1 py-2 px-4 rounded-lg items-center bg-white shadow-sm" : "flex-1 py-2 px-4 rounded-lg items-center"}
+              style={{ flex: 1 }}
+              className={selectedTab === 'all' ? "py-3 px-4 rounded-lg items-center bg-white shadow-sm" : "py-3 px-4 rounded-lg items-center"}
               onPress={() => {
                 console.log('Switching to all tab, count:', appointments.length);
                 setSelectedTab('all');
@@ -457,11 +481,13 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
         )}
 
         {/* Calendar Modal */}
-        <Modal
-          visible={showCalendar}
-          animationType="slide"
-          presentationStyle="pageSheet"
-        >
+        {showCalendar && (
+          <Modal
+            visible={showCalendar}
+            animationType="slide"
+            presentationStyle="pageSheet"
+            transparent={false}
+          >
           <SafeAreaView className="flex-1 bg-white">
             <View className="flex-1">
               {/* Calendar Header */}
@@ -564,7 +590,8 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
               </ScrollView>
             </View>
           </SafeAreaView>
-        </Modal>
+          </Modal>
+        )}
       </View>
     </SafeAreaView>
   );
