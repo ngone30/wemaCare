@@ -94,6 +94,17 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
 
   const handleSave = () => {
     if (user) {
+      // Validate required fields
+      if (!user.name || user.name.trim() === '') {
+        Alert.alert('Missing Information', 'Please enter your full name before continuing.');
+        return;
+      }
+      
+      if (!profile.dateOfBirth || !profile.height || !profile.weight) {
+        Alert.alert('Missing Information', 'Please complete all basic information fields before continuing.');
+        return;
+      }
+      
       updateUser({ medicalProfile: profile });
       onComplete();
     }
@@ -108,14 +119,40 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
 
   const renderBasicInfo = () => (
     <View className="space-y-4">
+      <View className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-2">
+        <Text className="text-blue-800 text-sm">
+          * Required fields for AI health recommendations
+        </Text>
+      </View>
       <View>
-        <Text className="text-gray-700 font-medium mb-2">Date of Birth</Text>
+        <Text className="text-gray-700 font-medium mb-2">Full Name *</Text>
+        <TextInput
+          className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
+          placeholder="Enter your full name (e.g., John David Smith)"
+          value={user?.name || ''}
+          onChangeText={(text) => {
+            if (user) {
+              updateUser({ name: text });
+            }
+          }}
+          autoCapitalize="words"
+        />
+        <Text className="text-gray-500 text-sm mt-1">
+          This will appear on your medical card and be shared with healthcare providers
+        </Text>
+      </View>
+
+      <View>
+        <Text className="text-gray-700 font-medium mb-2">Date of Birth *</Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
           placeholder="MM/DD/YYYY"
           value={profile.dateOfBirth}
           onChangeText={(text) => setProfile(prev => ({ ...prev, dateOfBirth: text }))}
         />
+        <Text className="text-gray-500 text-sm mt-1">
+          Required for accurate medical recommendations
+        </Text>
       </View>
 
       <View>
@@ -145,7 +182,7 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
 
       <View className="flex-row space-x-3">
         <View className="flex-1">
-          <Text className="text-gray-700 font-medium mb-2">Height (ft/in)</Text>
+          <Text className="text-gray-700 font-medium mb-2">Height (ft/in) *</Text>
           <TextInput
             className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
             placeholder={'5\'8"'}
@@ -154,7 +191,7 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
           />
         </View>
         <View className="flex-1">
-          <Text className="text-gray-700 font-medium mb-2">Weight (lbs)</Text>
+          <Text className="text-gray-700 font-medium mb-2">Weight (lbs) *</Text>
           <TextInput
             className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
             placeholder="150"

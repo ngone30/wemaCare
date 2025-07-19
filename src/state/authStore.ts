@@ -25,7 +25,7 @@ export const useAuthStore = create<AuthState>()(
           const mockUser: User = {
             id: '1',
             email,
-            name: 'John Doe',
+            name: 'John Doe', // Default name, can be updated in medical profile
             medicalProfile: {
               dateOfBirth: '',
               gender: 'male',
