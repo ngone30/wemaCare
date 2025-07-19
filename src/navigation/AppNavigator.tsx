@@ -181,9 +181,13 @@ export default function AppNavigator() {
         );
 
       case 'appointments':
+        console.log('Rendering appointments screen');
         return (
           <AppointmentsScreen
-            onBack={() => setCurrentScreen('home')}
+            onBack={() => {
+              console.log('Appointments back button - going to home');
+              setCurrentScreen('home');
+            }}
             onStartChat={(doctorId) => {
               setChatDoctorId(doctorId);
               setCurrentScreen('chat');
