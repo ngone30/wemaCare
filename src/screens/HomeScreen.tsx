@@ -107,23 +107,48 @@ Generated: ${new Date().toLocaleString()}
     <SafeAreaView className="flex-1 bg-gray-50">
       <View className="flex-1">
         {/* Header */}
-        <View className="bg-white px-6 py-6 shadow-sm">
+        <View className="bg-white px-6 pt-4 pb-6 shadow-sm">
+          {/* App Brand */}
+          <View className="flex-row items-center justify-center mb-4">
+            <View className="bg-blue-500 rounded-full p-2 mr-3">
+              <Ionicons name="medical" size={20} color="white" />
+            </View>
+            <Text className="text-xl font-bold text-blue-600">HealthAI</Text>
+            <Text className="text-sm text-gray-500 ml-2">v1.0</Text>
+          </View>
+          
+          {/* User Greeting */}
           <View className="flex-row justify-between items-center">
-            <View>
+            <View className="flex-1">
               <Text className="text-2xl font-bold text-gray-900">
-                Hello, {user?.name?.split(' ')[0] || 'User'}!
+                Hello, {user?.name?.split(' ')[0] || 'User'}! 👋
               </Text>
               <Text className="text-gray-600 mt-1">
                 How are you feeling today?
               </Text>
+              <View className="flex-row items-center mt-3">
+                <View className="flex-row items-center mr-4">
+                  <View className="w-2 h-2 bg-green-500 rounded-full mr-2"></View>
+                  <Text className="text-green-600 text-sm font-medium">Health Status: Good</Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons name="calendar-outline" size={12} color="#6B7280" />
+                  <Text className="text-gray-500 text-xs ml-1">
+                    {upcomingAppointments.length} upcoming
+                  </Text>
+                </View>
+              </View>
             </View>
             
-            <Pressable
-              className="bg-gray-100 rounded-full p-3"
-              onPress={onViewProfile}
-            >
-              <Ionicons name="person-outline" size={24} color="#374151" />
-            </Pressable>
+            <View className="items-center">
+              <Pressable
+                className="bg-gray-100 rounded-full p-3 mb-2"
+                onPress={onViewProfile}
+              >
+                <Ionicons name="person-outline" size={24} color="#374151" />
+              </Pressable>
+              <Text className="text-xs text-gray-500">Profile</Text>
+            </View>
           </View>
         </View>
 
@@ -408,8 +433,55 @@ Generated: ${new Date().toLocaleString()}
             </View>
           )}
 
+          {/* Footer */}
+          <View className="px-6 py-6 bg-gray-50 border-t border-gray-200">
+            <View className="items-center">
+              <View className="flex-row items-center mb-3">
+                <View className="bg-blue-500 rounded-full p-1 mr-2">
+                  <Ionicons name="medical" size={16} color="white" />
+                </View>
+                <Text className="text-gray-700 font-semibold">HealthAI</Text>
+              </View>
+              
+              <Text className="text-gray-600 text-sm text-center mb-3">
+                Your AI-powered healthcare companion
+              </Text>
+              
+              <View className="flex-row justify-between items-center mb-4 px-8">
+                <Pressable className="items-center">
+                  <Ionicons name="shield-checkmark-outline" size={20} color="#10B981" />
+                  <Text className="text-xs text-gray-600 mt-1">Secure</Text>
+                </Pressable>
+                
+                <Pressable className="items-center">
+                  <Ionicons name="pulse-outline" size={20} color="#EF4444" />
+                  <Text className="text-xs text-gray-600 mt-1">24/7 Health</Text>
+                </Pressable>
+                
+                <Pressable className="items-center">
+                  <Ionicons name="people-outline" size={20} color="#3B82F6" />
+                  <Text className="text-xs text-gray-600 mt-1">Expert Care</Text>
+                </Pressable>
+                
+                <Pressable className="items-center">
+                  <Ionicons name="analytics-outline" size={20} color="#8B5CF6" />
+                  <Text className="text-xs text-gray-600 mt-1">AI Insights</Text>
+                </Pressable>
+              </View>
+              
+              <View className="border-t border-gray-300 pt-3 w-full">
+                <Text className="text-xs text-gray-500 text-center">
+                  © 2024 HealthAI. All rights reserved.
+                </Text>
+                <Text className="text-xs text-gray-500 text-center mt-1">
+                  Emergency: Call 911 | Support: help@healthai.com
+                </Text>
+              </View>
+            </View>
+          </View>
+
           {/* Logout */}
-          <View className="px-6 py-6">
+          <View className="px-6 py-4 bg-white">
             <Pressable
               className="bg-red-50 border border-red-200 rounded-xl py-4 items-center"
               onPress={logout}

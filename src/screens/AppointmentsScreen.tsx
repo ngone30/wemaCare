@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useHealthcareStore, getDoctorById } from '../state/healthcareStore';
@@ -12,8 +12,39 @@ interface AppointmentsScreenProps {
 }
 
 export default function AppointmentsScreen({ onBack, onStartChat }: AppointmentsScreenProps) {
-  const { appointments } = useHealthcareStore();
+  const { appointments, bookAppointment } = useHealthcareStore();
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming');
+
+  // Initialize sample appointments if none exist
+  React.useEffect(() => {
+    if (appointments.length === 0) {
+      // Add sample appointments
+      const sampleAppointments = [
+        {
+          id: 'sample1',
+          doctorId: '1',
+          patientId: 'current-user',
+          date: '2024-01-15',
+          time: '10:00 AM',
+          status: 'completed' as const,
+          symptoms: 'Regular checkup and health screening',
+          notes: 'Patient is in good health, continue current lifestyle'
+        },
+        {
+          id: 'sample2',
+          doctorId: '2',
+          patientId: 'current-user',
+          date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          time: '02:30 PM',
+          status: 'confirmed' as const,
+          symptoms: 'Follow-up consultation for blood work results',
+          notes: 'Bring recent lab results and medication list'
+        }
+      ];
+      
+      sampleAppointments.forEach(apt => bookAppointment(apt));
+    }
+  }, []);
 
   const now = new Date();
   
@@ -122,8 +153,20 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
               <Text className="text-gray-600">
                 {appointments.length} total appointment{appointments.length !== 1 ? 's' : ''}
               </Text>
+              {appointments.length === 0 && (
+                <Text className="text-orange-600 text-sm mt-1">
+                  Sample data loading...
+                </Text>
+              )}
             </View>
-            <Pressable className="p-2">
+            <Pressable 
+              className="p-2 bg-blue-50 rounded-lg"
+              onPress={() => Alert.alert(
+                'Calendar Integration', 
+                'Calendar features:\n\n• View appointments by date\n• Sync with device calendar\n• Set appointment reminders\n• Export appointments\n\nComing soon in the next update!',
+                [{ text: 'Got it', style: 'default' }]
+              )}
+            >
               <Ionicons name="calendar-outline" size={24} color="#3B82F6" />
             </Pressable>
           </View>
