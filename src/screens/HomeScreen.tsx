@@ -13,6 +13,7 @@ interface HomeScreenProps {
   onViewAppointments: () => void;
   onViewMessages: () => void;
   onSelectDoctor: (doctor: RecommendedDoctor) => void;
+  onViewSettings: () => void;
 }
 
 export default function HomeScreen({ 
@@ -20,7 +21,8 @@ export default function HomeScreen({
   onViewProfile, 
   onViewAppointments, 
   onViewMessages,
-  onSelectDoctor 
+  onSelectDoctor,
+  onViewSettings
 }: HomeScreenProps) {
   const { user, logout } = useAuthStore();
   const { recommendations, appointments, conversations } = useHealthcareStore();
@@ -76,7 +78,7 @@ export default function HomeScreen({
         .slice(0, 3);
 
       const profileData = `
-🏥 HealthAI Medical Card
+🏥 WemaCARE Medical Card
 👤 Name: ${user.name}
 📧 Email: ${user.email}
 🎂 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
@@ -97,7 +99,7 @@ Generated: ${new Date().toLocaleString()}
 
       await Share.share({
         message: profileData,
-        title: 'Medical Card - HealthAI'
+        title: 'Medical Card - WemaCARE'
       });
     } catch (error) {
       Alert.alert('Error', 'Failed to share medical card');
@@ -107,7 +109,7 @@ Generated: ${new Date().toLocaleString()}
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title="HealthAI"
+        title="WemaCARE"
         rightComponent={
           <View style={{ alignItems: 'center' }}>
             <Pressable
@@ -117,11 +119,11 @@ Generated: ${new Date().toLocaleString()}
                 padding: 12,
                 marginBottom: 4
               }}
-              onPress={onViewProfile}
+              onPress={onViewSettings}
             >
-              <Ionicons name="person-outline" size={24} color="#374151" />
+              <Ionicons name="settings-outline" size={24} color="#2E7D32" />
             </Pressable>
-            <Text style={{ fontSize: 11, color: '#6B7280' }}>Profile</Text>
+            <Text style={{ fontSize: 11, color: '#6B7280' }}>Settings</Text>
           </View>
         }
       />
@@ -159,7 +161,14 @@ Generated: ${new Date().toLocaleString()}
               Medical QR Code
             </Text>
             
-            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <View style={{
+              backgroundColor: '#E8F5E8',
+              borderColor: '#2E7D32',
+              borderWidth: 1,
+              borderRadius: 12,
+              padding: 16,
+              marginBottom: 24
+            }}>
               <View className="items-center">
                 {showQR ? (
                   <View className="bg-white p-6 rounded-xl shadow-lg mb-4 border border-gray-200">
@@ -182,25 +191,47 @@ Generated: ${new Date().toLocaleString()}
                   </View>
                 )}
 
-                <View className="flex-row space-x-3">
+                <View style={{ flexDirection: 'row', gap: 12 }}>
                   <Pressable
-                    className="bg-blue-500 rounded-xl px-4 py-2"
+                    style={{
+                      backgroundColor: '#2E7D32',
+                      borderRadius: 12,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8
+                    }}
                     onPress={() => setShowQR(!showQR)}
                   >
-                    <Text className="text-white font-medium">
+                    <Text style={{
+                      color: 'white',
+                      fontWeight: '500'
+                    }}>
                       {showQR ? 'Hide QR' : 'Show QR'}
                     </Text>
                   </Pressable>
                   
                   <Pressable
-                    className="bg-green-500 rounded-xl px-4 py-2"
+                    style={{
+                      backgroundColor: '#FBC02D',
+                      borderRadius: 12,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8
+                    }}
                     onPress={shareMedicalCard}
                   >
-                    <Text className="text-white font-medium">Share Card</Text>
+                    <Text style={{
+                      color: 'white',
+                      fontWeight: '500'
+                    }}>Share Card</Text>
                   </Pressable>
                 </View>
                 
-                <Text className="text-blue-700 text-sm text-center mt-3 px-2">
+                <Text style={{
+                  color: '#2E7D32',
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginTop: 12,
+                  paddingHorizontal: 8
+                }}>
                   Let doctors scan this QR code for instant access to your medical information
                 </Text>
               </View>
@@ -215,37 +246,78 @@ Generated: ${new Date().toLocaleString()}
             
             <View className="flex-row space-x-4">
               <Pressable
-                className="flex-1 bg-blue-500 rounded-xl p-4 items-center"
+                style={{
+                  flex: 1,
+                  backgroundColor: '#2E7D32',
+                  borderRadius: 12,
+                  padding: 16,
+                  alignItems: 'center'
+                }}
                 onPress={onStartSymptomInput}
               >
-                <View className="bg-white/20 rounded-full p-3 mb-2">
+                <View style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: 24,
+                  padding: 12,
+                  marginBottom: 8
+                }}>
                   <Ionicons name="medical-outline" size={32} color="white" />
                 </View>
-                <Text className="text-white font-semibold text-center">
+                <Text style={{
+                  color: 'white',
+                  fontWeight: '600',
+                  textAlign: 'center',
+                  fontSize: 16
+                }}>
                   Check Symptoms
                 </Text>
-                <Text className="text-blue-100 text-sm text-center mt-1">
+                <Text style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginTop: 4
+                }}>
                   Get AI recommendations
                 </Text>
               </Pressable>
               
-              <View className="flex-1 space-y-4">
+              <View style={{ flex: 1, gap: 16 }}>
                 <Pressable
-                  className="bg-green-500 rounded-xl p-3 items-center"
+                  style={{
+                    backgroundColor: '#FBC02D',
+                    borderRadius: 12,
+                    padding: 12,
+                    alignItems: 'center'
+                  }}
                   onPress={onViewAppointments}
                 >
                   <Ionicons name="calendar-outline" size={24} color="white" />
-                  <Text className="text-white font-medium text-sm mt-1">
+                  <Text style={{
+                    color: 'white',
+                    fontWeight: '500',
+                    fontSize: 14,
+                    marginTop: 4
+                  }}>
                     Appointments
                   </Text>
                 </Pressable>
                 
                 <Pressable
-                  className="bg-purple-500 rounded-xl p-3 items-center"
+                  style={{
+                    backgroundColor: '#FF7043',
+                    borderRadius: 12,
+                    padding: 12,
+                    alignItems: 'center'
+                  }}
                   onPress={onViewMessages}
                 >
                   <Ionicons name="chatbubbles-outline" size={24} color="white" />
-                  <Text className="text-white font-medium text-sm mt-1">
+                  <Text style={{
+                    color: 'white',
+                    fontWeight: '500',
+                    fontSize: 14,
+                    marginTop: 4
+                  }}>
                     Messages
                   </Text>
                 </Pressable>
@@ -376,16 +448,33 @@ Generated: ${new Date().toLocaleString()}
               Health Tips
             </Text>
             
-            <View className="bg-blue-500 rounded-xl p-6">
+            <View style={{
+              backgroundColor: '#FF8E53',
+              borderRadius: 12,
+              padding: 24
+            }}>
               <View className="flex-row items-start">
-                <View className="bg-white/20 rounded-full p-2 mr-3">
+                <View style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: 16,
+                  padding: 8,
+                  marginRight: 12
+                }}>
                   <Ionicons name="bulb-outline" size={24} color="white" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-white font-semibold text-lg mb-2">
+                  <Text style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    marginBottom: 8
+                  }}>
                     Stay Hydrated
                   </Text>
-                  <Text className="text-blue-100 leading-relaxed">
+                  <Text style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: 20
+                  }}>
                     Drinking enough water helps maintain your body temperature, lubricate joints, and transport nutrients.
                   </Text>
                 </View>
@@ -437,10 +526,15 @@ Generated: ${new Date().toLocaleString()}
           <View className="px-6 py-6 bg-gray-50 border-t border-gray-200">
             <View className="items-center">
               <View className="flex-row items-center mb-3">
-                <View className="bg-blue-500 rounded-full p-1 mr-2">
+                <View style={{
+                  backgroundColor: '#2E7D32',
+                  borderRadius: 12,
+                  padding: 4,
+                  marginRight: 8
+                }}>
                   <Ionicons name="medical" size={16} color="white" />
                 </View>
-                <Text className="text-gray-700 font-semibold">HealthAI</Text>
+                <Text className="text-gray-700 font-semibold">WemaCARE</Text>
               </View>
               
               <Text className="text-gray-600 text-sm text-center mb-3">
@@ -471,10 +565,10 @@ Generated: ${new Date().toLocaleString()}
               
               <View className="border-t border-gray-300 pt-3 w-full">
                 <Text className="text-xs text-gray-500 text-center">
-                  © 2024 HealthAI. All rights reserved.
+                  © 2024 WemaCARE. All rights reserved.
                 </Text>
                 <Text className="text-xs text-gray-500 text-center mt-1">
-                  Emergency: Call 911 | Support: help@healthai.com
+                  Emergency: Call 911 | Support: help@wemacare.com
                 </Text>
               </View>
             </View>

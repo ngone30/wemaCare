@@ -61,12 +61,12 @@ export default function AppFooter({ currentScreen, onNavigate }: AppFooterProps)
                 <Ionicons 
                   name={isActive ? tab.activeIcon as any : tab.icon as any} 
                   size={24} 
-                  color={isActive ? '#3B82F6' : '#6B7280'} 
+                  color={isActive ? '#2E7D32' : '#6B7280'} 
                 />
                 <Text style={{
                   fontSize: 11,
                   fontWeight: isActive ? '600' : '400',
-                  color: isActive ? '#3B82F6' : '#6B7280',
+                  color: isActive ? '#2E7D32' : '#6B7280',
                   marginTop: 2
                 }}>
                   {tab.label}

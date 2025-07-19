@@ -267,39 +267,67 @@ Remember: This is for educational purposes only and not a replacement for profes
         <View className="px-6 py-4 border-b border-gray-200">
           <View className="flex-row space-x-3">
             <Pressable
-              className="flex-1 bg-blue-50 border border-blue-200 rounded-xl py-3 items-center"
+              style={{
+                flex: 1,
+                backgroundColor: '#E8F5E8',
+                borderColor: '#2E7D32',
+                borderWidth: 1,
+                borderRadius: 12,
+                paddingVertical: 12,
+                alignItems: 'center'
+              }}
               onPress={pickImage}
             >
-              <Ionicons name="image-outline" size={24} color="#3B82F6" />
-              <Text className="text-blue-600 font-medium mt-1">Gallery</Text>
+              <Ionicons name="image-outline" size={24} color="#2E7D32" />
+              <Text style={{
+                color: '#2E7D32',
+                fontWeight: '500',
+                marginTop: 4
+              }}>Gallery</Text>
             </Pressable>
             
             <Pressable
-              className="flex-1 bg-green-50 border border-green-200 rounded-xl py-3 items-center"
+              style={{
+                flex: 1,
+                backgroundColor: '#FFF8E1',
+                borderColor: '#FBC02D',
+                borderWidth: 1,
+                borderRadius: 12,
+                paddingVertical: 12,
+                alignItems: 'center'
+              }}
               onPress={takePicture}
             >
-              <Ionicons name="camera-outline" size={24} color="#10B981" />
-              <Text className="text-green-600 font-medium mt-1">Camera</Text>
+              <Ionicons name="camera-outline" size={24} color="#FBC02D" />
+              <Text style={{
+                color: '#FBC02D',
+                fontWeight: '500',
+                marginTop: 4
+              }}>Camera</Text>
             </Pressable>
             
             <Pressable
-              className={cn(
-                "flex-1 border rounded-xl py-3 items-center",
-                isRecording 
-                  ? "bg-red-50 border-red-200" 
-                  : "bg-purple-50 border-purple-200"
-              )}
+              style={{
+                flex: 1,
+                borderWidth: 1,
+                borderRadius: 12,
+                paddingVertical: 12,
+                alignItems: 'center',
+                backgroundColor: isRecording ? '#FFEBEE' : '#FFF8E1',
+                borderColor: isRecording ? '#FF7043' : '#FF8E53'
+              }}
               onPress={isRecording ? stopRecording : startRecording}
             >
               <Ionicons 
                 name={isRecording ? "stop" : "mic-outline"} 
                 size={24} 
-                color={isRecording ? "#EF4444" : "#8B5CF6"} 
+                color={isRecording ? "#FF7043" : "#FF8E53"} 
               />
-              <Text className={cn(
-                "font-medium mt-1",
-                isRecording ? "text-red-600" : "text-purple-600"
-              )}>
+              <Text style={{
+                fontWeight: '500',
+                marginTop: 4,
+                color: isRecording ? "#FF7043" : "#FF8E53"
+              }}>
                 {isRecording ? 'Stop' : 'Voice'}
               </Text>
             </Pressable>
@@ -384,10 +412,13 @@ Remember: This is for educational purposes only and not a replacement for profes
         {symptoms.length > 0 && (
           <View className="px-6 py-4 border-t border-gray-200">
             <Pressable
-              className={cn(
-                "bg-blue-500 rounded-xl py-4 items-center",
-                isAnalyzing && "opacity-50"
-              )}
+              style={{
+                backgroundColor: '#2E7D32',
+                borderRadius: 12,
+                paddingVertical: 16,
+                alignItems: 'center',
+                opacity: isAnalyzing ? 0.5 : 1
+              }}
               onPress={analyzeSymptoms}
               disabled={isAnalyzing}
             >

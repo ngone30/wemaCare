@@ -18,6 +18,7 @@ import ChatScreen from '../screens/ChatScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import AppointmentsScreen from '../screens/AppointmentsScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 export default function AppNavigator() {
   const { isAuthenticated, user, ensureMedicalProfile } = useAuthStore();
@@ -113,6 +114,7 @@ export default function AppNavigator() {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
             }}
+            onViewSettings={() => setCurrentScreen('settings')}
           />
         );
         break;
@@ -143,6 +145,7 @@ export default function AppNavigator() {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
             }}
+            onViewSettings={() => setCurrentScreen('settings')}
           />
         );
         break;
@@ -169,6 +172,7 @@ export default function AppNavigator() {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
             }}
+            onViewSettings={() => setCurrentScreen('settings')}
           />
         );
         break;
@@ -210,6 +214,16 @@ export default function AppNavigator() {
         );
         break;
 
+      case 'settings':
+        screenContent = (
+          <SettingsScreen
+            onBack={() => setCurrentScreen('home')}
+            onEditProfile={() => setShowMedicalProfile(true)}
+            onViewProfile={() => setCurrentScreen('profile')}
+          />
+        );
+        break;
+
       default:
         screenContent = (
           <HomeScreen
@@ -221,6 +235,7 @@ export default function AppNavigator() {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
             }}
+            onViewSettings={() => setCurrentScreen('settings')}
           />
         );
         break;

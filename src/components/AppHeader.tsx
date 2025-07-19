@@ -12,7 +12,7 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ 
-  title = "HealthAI", 
+  title = "WemaCARE", 
   showBackButton = false, 
   onBack,
   rightComponent 

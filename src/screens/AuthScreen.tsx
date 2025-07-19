@@ -55,10 +55,23 @@ export default function AuthScreen() {
           <View className="flex-1 justify-center py-12">
             {/* Header */}
             <View className="items-center mb-12">
-              <View className="w-20 h-20 bg-blue-500 rounded-full items-center justify-center mb-4">
+              <View style={{
+                width: 80,
+                height: 80,
+                backgroundColor: '#2E7D32',
+                borderRadius: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 16
+              }}>
                 <Ionicons name="medical" size={40} color="white" />
               </View>
-              <Text className="text-3xl font-bold text-gray-900 mb-2">HealthAI</Text>
+              <Text style={{
+                fontSize: 32,
+                fontWeight: 'bold',
+                color: '#2E7D32',
+                marginBottom: 8
+              }}>WemaCARE</Text>
               <Text className="text-gray-600 text-center">
                 {isSignUp ? 'Create your account to get started' : 'Welcome back'}
               </Text>
@@ -130,10 +143,13 @@ export default function AuthScreen() {
 
             {/* Auth Button */}
             <Pressable
-              className={cn(
-                "bg-blue-500 rounded-xl py-4 mt-8",
-                loading && "opacity-50"
-              )}
+              style={{
+                backgroundColor: '#2E7D32',
+                borderRadius: 12,
+                paddingVertical: 16,
+                marginTop: 32,
+                opacity: loading ? 0.5 : 1
+              }}
               onPress={handleAuth}
               disabled={loading}
             >
@@ -148,7 +164,10 @@ export default function AuthScreen() {
                 {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
               </Text>
               <Pressable onPress={() => setIsSignUp(!isSignUp)}>
-                <Text className="text-blue-500 font-semibold">
+                <Text style={{
+                  color: '#2E7D32',
+                  fontWeight: '600'
+                }}>
                   {isSignUp ? 'Sign In' : 'Sign Up'}
                 </Text>
               </Pressable>

@@ -33,7 +33,7 @@ export default function ProfileScreen({ onBack, onEditProfile }: ProfileScreenPr
   const shareProfile = async () => {
     try {
       const profileData = `
-HealthAI Medical Card
+WemaCARE Medical Card
 Name: ${user.name}
 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
 Blood Type: ${user.medicalProfile.bloodType || 'Not provided'}

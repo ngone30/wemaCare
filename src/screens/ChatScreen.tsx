@@ -145,7 +145,7 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                 alert(`Starting video call with Dr. ${doctor.name}...`);
               }}
             >
-              <Ionicons name="videocam-outline" size={24} color="#3B82F6" />
+              <Ionicons name="videocam-outline" size={24} color="#2E7D32" />
             </Pressable>
             
             <Pressable 
@@ -155,7 +155,7 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                 alert(`Calling Dr. ${doctor.name} at ${doctor.phone || '(555) 123-4567'}...`);
               }}
             >
-              <Ionicons name="call-outline" size={24} color="#3B82F6" />
+              <Ionicons name="call-outline" size={24} color="#FBC02D" />
             </Pressable>
           </View>
         </View>
@@ -199,9 +199,30 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
                     )}
                     
                     <View className={isCurrentUser ? "flex-row justify-end" : "flex-row justify-start"}>
-                      <View className={isCurrentUser 
-                        ? "max-w-[80%] rounded-2xl px-4 py-3 bg-blue-500 rounded-br-md" 
-                        : "max-w-[80%] rounded-2xl px-4 py-3 bg-white rounded-bl-md shadow-sm border border-gray-100"
+                      <View style={isCurrentUser 
+                        ? {
+                            maxWidth: '80%',
+                            borderRadius: 16,
+                            paddingHorizontal: 16,
+                            paddingVertical: 12,
+                            backgroundColor: '#2E7D32',
+                            borderBottomRightRadius: 4
+                          }
+                        : {
+                            maxWidth: '80%',
+                            borderRadius: 16,
+                            paddingHorizontal: 16,
+                            paddingVertical: 12,
+                            backgroundColor: 'white',
+                            borderBottomLeftRadius: 4,
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 1 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 2,
+                            elevation: 2,
+                            borderWidth: 1,
+                            borderColor: '#F3F4F6'
+                          }
                       }>
                         {message.type === 'appointment' && (
                           <View className="flex-row items-center mb-2">
@@ -263,7 +284,11 @@ export default function ChatScreen({ doctorId, onBack }: ChatScreenProps) {
             </Pressable>
             
             <Pressable
-              className={messageText.trim() ? "rounded-full p-3 bg-blue-500" : "rounded-full p-3 bg-gray-300"}
+              style={{
+                borderRadius: 20,
+                padding: 12,
+                backgroundColor: messageText.trim() ? '#2E7D32' : '#D1D5DB'
+              }}
               onPress={handleSendMessage}
               disabled={!messageText.trim()}
             >
