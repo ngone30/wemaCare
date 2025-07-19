@@ -10,6 +10,7 @@ interface AuthState {
   signup: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
+  ensureMedicalProfile: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -104,6 +105,43 @@ export const useAuthStore = create<AuthState>()(
         const currentUser = get().user;
         if (currentUser) {
           set({ user: { ...currentUser, ...updatedUser } });
+        }
+      },
+
+      // Helper to ensure user has complete medical profile structure
+      ensureMedicalProfile: () => {
+        const currentUser = get().user;
+        if (currentUser && !currentUser.medicalProfile) {
+          const defaultProfile = {
+            dateOfBirth: '',
+            gender: 'male' as const,
+            bloodType: '',
+            height: '',
+            weight: '',
+            allergies: [],
+            medications: [],
+            medicalConditions: [],
+            emergencyContact: {
+              name: '',
+              phone: '',
+              relationship: ''
+            },
+            insurance: {
+              provider: '',
+              policyNumber: ''
+            },
+            preferredLanguage: 'English',
+            smokingStatus: 'never' as const,
+            alcoholConsumption: 'none' as const,
+            exerciseFrequency: 'moderate' as const
+          };
+          
+          set({ 
+            user: { 
+              ...currentUser, 
+              medicalProfile: defaultProfile 
+            } 
+          });
         }
       }
     }),

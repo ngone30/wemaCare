@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../state/authStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 
@@ -16,7 +18,16 @@ import ChatScreen from '../screens/ChatScreen';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, ensureMedicalProfile } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Ensure medical profile exists for authenticated users
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      ensureMedicalProfile();
+    }
+    setIsInitialized(true);
+  }, [isAuthenticated, user, ensureMedicalProfile]);
   const [showMedicalProfile, setShowMedicalProfile] = useState(false);
   const [currentScreen, setCurrentScreen] = useState('home');
   const [selectedDoctor, setSelectedDoctor] = useState<RecommendedDoctor | null>(null);
@@ -28,10 +39,19 @@ export default function AppNavigator() {
 
   // Check if user needs to complete medical profile
   const needsMedicalProfile = user && (
+    !user.medicalProfile || 
     !user.medicalProfile.dateOfBirth || 
     !user.medicalProfile.height || 
     !user.medicalProfile.weight
   );
+
+  if (!isInitialized) {
+    return (
+      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+        <Text className="text-gray-600">Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
