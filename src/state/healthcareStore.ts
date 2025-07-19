@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Doctor, Hospital, Recommendation, SymptomInput, Appointment, Message, Conversation } from '../types/healthcare';
+import { MentalHealthAssessment } from '../api/healthcare-analysis';
+import { languageService } from '../services/language-service';
 
 interface HealthcareState {
   symptoms: SymptomInput[];
@@ -10,6 +12,12 @@ interface HealthcareState {
   appointments: Appointment[];
   conversations: Conversation[];
   messages: Message[];
+  currentLanguage: string;
+  mentalHealthAssessment: MentalHealthAssessment | null;
+  mentalHealthAssessment: MentalHealthAssessment | null;
+  mentalHealthProviders: MentalHealthProvider[];
+  mentalHealthFacilities: MentalHealthFacility[];
+  currentLanguage: string;
   
   // Actions
   setSymptoms: (symptoms: SymptomInput[]) => void;
@@ -17,6 +25,9 @@ interface HealthcareState {
   setRecommendations: (recommendations: Recommendation) => void;
   bookAppointment: (appointment: Appointment) => void;
   sendMessage: (message: Message) => void;
+  setCurrentLanguage: (language: string) => void;
+  setMentalHealthAssessment: (assessment: MentalHealthAssessment) => void;
+  translateContent: (text: string) => Promise<string>;
   clearCurrentSession: () => void;
 }
 
@@ -112,6 +123,10 @@ export const useHealthcareStore = create<HealthcareState>()(
       symptoms: [],
       currentAnalysis: '',
       recommendations: null,
+      mentalHealthAssessment: null,
+      mentalHealthProviders: [],
+      mentalHealthFacilities: [],
+      currentLanguage: 'en',
       appointments: [
         {
           id: 'apt1',
@@ -267,6 +282,35 @@ export const useHealthcareStore = create<HealthcareState>()(
           currentAnalysis: '',
           recommendations: null
         });
+      },
+
+      setMentalHealthAssessment: (assessment) => {
+        set({ mentalHealthAssessment: assessment });
+      },
+
+      setMentalHealthProviders: (providers) => {
+        set({ mentalHealthProviders: providers });
+      },
+
+      setMentalHealthFacilities: (facilities) => {
+        set({ mentalHealthFacilities: facilities });
+      },
+
+      setCurrentLanguage: (language) => {
+        set({ currentLanguage: language });
+        languageService.setCurrentLanguage(language);
+      },
+
+      translateContent: async (text) => {
+        const { currentLanguage } = get();
+        if (currentLanguage === 'en') return text;
+        
+        try {
+          return await languageService.translateText(text, currentLanguage);
+        } catch (error) {
+          console.error('Translation error:', error);
+          return text;
+        }
       }
     }),
     {

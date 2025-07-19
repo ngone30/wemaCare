@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
+import { useHealthcareStore } from '../state/healthcareStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SUPPORTED_LANGUAGES } from '../services/language-service';
+import LanguageSelector from './LanguageSelector';
 
 interface AppHeaderProps {
   title?: string;
@@ -18,7 +21,11 @@ export default function AppHeader({
   rightComponent 
 }: AppHeaderProps) {
   const { user } = useAuthStore();
+  const { currentLanguage } = useHealthcareStore();
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const insets = useSafeAreaInsets();
+  
+  const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
 
   return (
     <View 
@@ -71,11 +78,45 @@ export default function AppHeader({
           </View>
         </View>
 
-        {rightComponent && (
-          <View style={{ marginLeft: 12 }}>
-            {rightComponent}
-          </View>
-        )}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {/* Language Selector */}
+          <Pressable
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#F3F4F6',
+              borderRadius: 16,
+              paddingHorizontal: 8,
+              paddingVertical: 4
+            }}
+            onPress={() => setShowLanguageSelector(true)}
+          >
+            <Text style={{ fontSize: 14, marginRight: 4 }}>
+              {currentLang.flag}
+            </Text>
+            <Text style={{
+              fontSize: 12,
+              fontWeight: '500',
+              color: '#374151'
+            }}>
+              {currentLang.code.toUpperCase()}
+            </Text>
+          </Pressable>
+
+          {rightComponent && (
+            <View>
+              {rightComponent}
+            </View>
+          )}
+        </View>
+
+        <LanguageSelector
+          visible={showLanguageSelector}
+          onClose={() => setShowLanguageSelector(false)}
+          onLanguageSelect={(language) => {
+            // Language change handled in LanguageSelector
+          }}
+        />
       </View>
     </View>
   );

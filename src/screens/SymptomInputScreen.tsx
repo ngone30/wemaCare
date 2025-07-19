@@ -7,7 +7,9 @@ import { Audio } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import { transcribeAudio } from '../api/transcribe-audio';
 import { getOpenAITextResponse } from '../api/chat-service';
+import { analyzeHealthcareNeeds } from '../api/healthcare-analysis';
 import { useAuthStore } from '../state/authStore';
+import { useHealthcareStore } from '../state/healthcareStore';
 import { SymptomInput } from '../types/healthcare';
 import { cn } from '../utils/cn';
 import AppHeader from '../components/AppHeader';
@@ -19,6 +21,7 @@ interface SymptomInputScreenProps {
 
 export default function SymptomInputScreen({ onAnalysisComplete, onBack }: SymptomInputScreenProps) {
   const { user } = useAuthStore();
+  const { setMentalHealthAssessment } = useHealthcareStore();
   const [symptoms, setSymptoms] = useState<SymptomInput[]>([]);
   const [textInput, setTextInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -207,41 +210,55 @@ export default function SymptomInputScreen({ onAnalysisComplete, onBack }: Sympt
       return;
     }
 
+    if (!user) {
+      Alert.alert('Error', 'User information not available');
+      return;
+    }
+
     setIsAnalyzing(true);
     
     try {
-      const symptomsText = symptoms.map(s => `${s.type.toUpperCase()}: ${s.content}`).join('\n\n');
-      const medicalProfile = user?.medicalProfile;
+      // Use enhanced healthcare analysis that considers medical history and mental health
+      const analysis = await analyzeHealthcareNeeds(symptoms, user);
       
-      const prompt = `As a medical AI assistant, analyze the following patient symptoms and medical profile to provide healthcare recommendations.
+      // Store mental health assessment if present
+      if (analysis.mentalHealthAssessment) {
+        setMentalHealthAssessment(analysis.mentalHealthAssessment);
+        
+        // Alert user if immediate mental health attention is needed
+        if (analysis.mentalHealthAssessment.requiresImmediateAttention) {
+          Alert.alert(
+            'Mental Health Support Available',
+            'Based on your symptoms, we recommend speaking with a mental health professional. We have connected you with qualified therapists and psychiatrists.',
+            [
+              { text: 'View Recommendations', onPress: () => {} },
+              { text: 'Emergency Help', onPress: () => Alert.alert('Emergency', 'If you are in crisis, please call your local emergency number or go to the nearest hospital.') }
+            ]
+          );
+        }
+      }
 
-PATIENT MEDICAL PROFILE:
-- Age: ${medicalProfile?.dateOfBirth || 'Not provided'}
-- Gender: ${medicalProfile?.gender || 'Not provided'}
-- Allergies: ${medicalProfile?.allergies?.join(', ') || 'None listed'}
-- Current Medications: ${medicalProfile?.medications?.join(', ') || 'None listed'}
-- Medical Conditions: ${medicalProfile?.medicalConditions?.join(', ') || 'None listed'}
-- Smoking Status: ${medicalProfile?.smokingStatus || 'Not provided'}
-- Exercise: ${medicalProfile?.exerciseFrequency || 'Not provided'}
+      // Show urgency alert if needed
+      if (analysis.urgencyLevel === 'emergency') {
+        Alert.alert(
+          'Urgent Medical Attention Needed',
+          'Based on your symptoms and medical history, please seek immediate medical attention.',
+          [
+            { text: 'Find Emergency Care', onPress: () => {} },
+            { text: 'Continue', onPress: () => {} }
+          ]
+        );
+      } else if (analysis.urgencyLevel === 'high') {
+        Alert.alert(
+          'Priority Medical Care',
+          'Your symptoms suggest you should see a healthcare provider soon.',
+          [{ text: 'Continue', onPress: () => {} }]
+        );
+      }
 
-PATIENT SYMPTOMS:
-${symptomsText}
-
-Please provide:
-1. A summary of the patient's symptoms
-2. Possible conditions or concerns (educational purposes only)
-3. Recommended medical specialties to consult
-4. Urgency level (routine, urgent, emergency)
-5. General health advice
-
-Remember: This is for educational purposes only and not a replacement for professional medical diagnosis.`;
-
-      const analysis = await getOpenAITextResponse([
-        { role: 'user', content: prompt }
-      ]);
-
-      onAnalysisComplete(symptoms, analysis.content);
+      onAnalysisComplete(symptoms, analysis.analysis);
     } catch (error) {
+      console.error('Enhanced analysis error:', error);
       Alert.alert('Error', 'Failed to analyze symptoms. Please try again.');
     } finally {
       setIsAnalyzing(false);

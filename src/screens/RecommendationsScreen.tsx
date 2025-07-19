@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, Linking, Image } from 'react-native';
+import { View, Text, ScrollView, Pressable, Linking, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { getOpenAITextResponse } from '../api/chat-service';
+import { getOpenAITextResponse, getEnhancedHealthcareRecommendations } from '../api/chat-service';
 import { useHealthcareStore, getMockDoctors, getMockHospitals } from '../state/healthcareStore';
+import { useAuthStore } from '../state/authStore';
 import { SymptomInput, RecommendedDoctor, RecommendedHospital, Recommendation } from '../types/healthcare';
+import { 
+  assessMentalHealth, 
+  recommendMentalHealthProviders, 
+  recommendMentalHealthFacilities,
+  getMentalHealthCrisisResources 
+} from '../services/mentalHealthService';
 import { cn } from '../utils/cn';
 
 interface RecommendationsScreenProps {
@@ -20,8 +27,11 @@ export default function RecommendationsScreen({
   onSelectDoctor, 
   onBackToInput 
 }: RecommendationsScreenProps) {
-  const { setRecommendations, recommendations } = useHealthcareStore();
+  const { setRecommendations, recommendations, setMentalHealthAssessment, setMentalHealthProviders, setMentalHealthFacilities, currentLanguage } = useHealthcareStore();
+  const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const [showMentalHealthSupport, setShowMentalHealthSupport] = useState(false);
+  const [mentalHealthAssessment, setMentalHealthAssessmentLocal] = useState<any>(null);
 
   useEffect(() => {
     generateRecommendations();
@@ -29,15 +39,43 @@ export default function RecommendationsScreen({
 
   const generateRecommendations = async () => {
     try {
+      setLoading(true);
       const symptomsText = symptoms.map(s => `${s.type.toUpperCase()}: ${s.content}`).join('\n');
       
-      const prompt = `Based on these symptoms and analysis, recommend the most suitable doctors and hospitals:
+      // Assess mental health first
+      if (user?.medicalProfile) {
+        const assessment = await assessMentalHealth(symptoms, user.medicalProfile);
+        setMentalHealthAssessmentLocal(assessment);
+        setMentalHealthAssessment(assessment);
+        
+        if (assessment.riskLevel !== 'low' || assessment.professionalHelp) {
+          setShowMentalHealthSupport(true);
+          
+          // Get mental health provider recommendations
+          const providers = recommendMentalHealthProviders(assessment, '', currentLanguage);
+          const facilities = recommendMentalHealthFacilities(assessment, '', currentLanguage);
+          
+          setMentalHealthProviders(providers);
+          setMentalHealthFacilities(facilities);
+        }
+      }
+      
+      const prompt = `Based on these symptoms, analysis, and medical history, recommend the most suitable doctors and hospitals:
 
 SYMPTOMS:
 ${symptomsText}
 
 ANALYSIS:
 ${analysis}
+
+MEDICAL HISTORY:
+- Previous conditions: ${user?.medicalProfile?.medicalConditions?.join(', ') || 'None listed'}
+- Current medications: ${user?.medicalProfile?.medications?.join(', ') || 'None listed'}
+- Allergies: ${user?.medicalProfile?.allergies?.join(', ') || 'None listed'}
+- Age: ${user?.medicalProfile?.dateOfBirth ? new Date().getFullYear() - new Date(user.medicalProfile.dateOfBirth).getFullYear() : 'Not provided'}
+- Blood type: ${user?.medicalProfile?.bloodType || 'Not provided'}
+
+MENTAL HEALTH ASSESSMENT: ${mentalHealthAssessment ? `Risk level: ${mentalHealthAssessment.riskLevel}, Professional help needed: ${mentalHealthAssessment.professionalHelp}` : 'Not assessed'}
 
 AVAILABLE DOCTORS:
 ${getMockDoctors().map(doc => 

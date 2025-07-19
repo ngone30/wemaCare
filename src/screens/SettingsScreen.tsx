@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, Switch, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
+import { useHealthcareStore } from '../state/healthcareStore';
+import { SUPPORTED_LANGUAGES } from '../services/language-service';
 import AppHeader from '../components/AppHeader';
+import LanguageSelector from '../components/LanguageSelector';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -12,11 +15,13 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }: SettingsScreenProps) {
   const { user, logout } = useAuthStore();
+  const { currentLanguage, setCurrentLanguage } = useHealthcareStore();
   const [notifications, setNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [biometricAuth, setBiometricAuth] = useState(false);
   const [dataSharing, setDataSharing] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -48,6 +53,11 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
         }
       ]
     );
+  };
+
+  const getCurrentLanguageName = () => {
+    const language = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage);
+    return language ? `${language.nativeName} (${language.name})` : 'English';
   };
 
   const handleExportData = () => {
@@ -140,8 +150,30 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
       />
       
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Account Section */}
+        {/* App Preferences */}
         <View style={{ marginTop: 16 }}>
+          <Text style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#6B7280',
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}>
+            App Preferences
+          </Text>
+          
+          <SettingItem
+            icon="language-outline"
+            title="Language"
+            subtitle={`Current: ${getCurrentLanguageName()}`}
+            onPress={() => setShowLanguageSelector(true)}
+          />
+        </View>
+
+        {/* Account Section */}
+        <View style={{ marginTop: 24 }}>
           <Text style={{
             fontSize: 14,
             fontWeight: '600',
@@ -421,6 +453,15 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           </Pressable>
         </View>
       </ScrollView>
+
+      {/* Language Selector Modal */}
+      <LanguageSelector
+        visible={showLanguageSelector}
+        onClose={() => setShowLanguageSelector(false)}
+        onLanguageSelect={(languageCode) => {
+          setCurrentLanguage(languageCode);
+        }}
+      />
     </View>
   );
 }

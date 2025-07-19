@@ -442,6 +442,74 @@ Generated: ${new Date().toLocaleString()}
             </View>
           </View>
 
+          {/* Mental Health Support */}
+          <View className="px-6 py-4">
+            <Text className="text-xl font-bold text-gray-900 mb-4">
+              Mental Health Support
+            </Text>
+            
+            <View style={{
+              backgroundColor: '#FF7043',
+              borderRadius: 12,
+              padding: 20
+            }}>
+              <View className="flex-row items-start">
+                <View style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: 16,
+                  padding: 8,
+                  marginRight: 12
+                }}>
+                  <Ionicons name="heart-outline" size={24} color="white" />
+                </View>
+                <View className="flex-1">
+                  <Text style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    marginBottom: 8
+                  }}>
+                    Mental Wellness Matters
+                  </Text>
+                  <Text style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: 20,
+                    marginBottom: 12
+                  }}>
+                    WemaCARE provides access to qualified therapists, psychiatrists, and mental health facilities across Africa.
+                  </Text>
+                  <Pressable
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: 8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      alignSelf: 'flex-start'
+                    }}
+                    onPress={() => {
+                      Alert.alert(
+                        'Mental Health Resources',
+                        'Access mental health support through our symptom checker or contact emergency services if in crisis.',
+                        [
+                          { text: 'Emergency Help', onPress: () => Alert.alert('Emergency', 'If you are in immediate danger, please call your local emergency number.') },
+                          { text: 'Find Support', onPress: onStartSymptomInput }
+                        ]
+                      );
+                    }}
+                  >
+                    <Text style={{
+                      color: 'white',
+                      fontWeight: '500',
+                      fontSize: 14
+                    }}>
+                      Find Support
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </View>
+
           {/* Health Tips */}
           <View className="px-6 py-4">
             <Text className="text-xl font-bold text-gray-900 mb-4">
@@ -477,6 +545,65 @@ Generated: ${new Date().toLocaleString()}
                   }}>
                     Drinking enough water helps maintain your body temperature, lubricate joints, and transport nutrients.
                   </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Multilingual Support */}
+          <View className="px-6 py-4">
+            <Text className="text-xl font-bold text-gray-900 mb-4">
+              Available in Your Language
+            </Text>
+            
+            <View style={{
+              backgroundColor: '#2E7D32',
+              borderRadius: 12,
+              padding: 20
+            }}>
+              <View className="flex-row items-start">
+                <View style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: 16,
+                  padding: 8,
+                  marginRight: 12
+                }}>
+                  <Ionicons name="language-outline" size={24} color="white" />
+                </View>
+                <View className="flex-1">
+                  <Text style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    marginBottom: 8
+                  }}>
+                    15+ African Languages
+                  </Text>
+                  <Text style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: 20,
+                    marginBottom: 12
+                  }}>
+                    Get healthcare recommendations in Swahili, Hausa, Yoruba, Zulu, Amharic, and many more languages across Africa.
+                  </Text>
+                  <Pressable
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: 8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      alignSelf: 'flex-start'
+                    }}
+                    onPress={onViewSettings}
+                  >
+                    <Text style={{
+                      color: 'white',
+                      fontWeight: '500',
+                      fontSize: 14
+                    }}>
+                      Change Language
+                    </Text>
+                  </Pressable>
                 </View>
               </View>
             </View>
