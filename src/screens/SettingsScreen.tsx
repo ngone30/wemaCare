@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Switch, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, Switch, Alert, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import AppHeader from '../components/AppHeader';
+import { useLanguage, availableLanguages } from '../contexts/LanguageContext';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -12,20 +13,32 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }: SettingsScreenProps) {
   const { user, logout } = useAuthStore();
+  const { currentLanguage, setLanguage, t } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [biometricAuth, setBiometricAuth] = useState(false);
   const [dataSharing, setDataSharing] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  const handleLanguageChange = async (languageCode: string) => {
+    await setLanguage(languageCode as any);
+    setShowLanguageModal(false);
+  };
+
+  const getCurrentLanguageName = () => {
+    const lang = availableLanguages.find(lang => lang.code === currentLanguage);
+    return lang ? `${lang.flag} ${lang.nativeName}` : 'English';
+  };
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('settings.signOut'),
+      t('settings.confirmSignOut'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: 'Sign Out', 
+          text: t('settings.signOut'), 
           style: 'destructive',
           onPress: logout 
         }
@@ -35,15 +48,15 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      'Delete Account',
-      'This action cannot be undone. All your medical data will be permanently deleted.',
+      t('settings.deleteAccount'),
+      t('settings.confirmDeleteAccount'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: 'Delete', 
+          text: t('common.delete'), 
           style: 'destructive',
           onPress: () => {
-            Alert.alert('Account Deletion', 'Account deletion feature would be implemented here with proper security measures.');
+            Alert.alert(t('settings.deleteAccount'), t('settings.accountDeletionInfo'));
           }
         }
       ]
@@ -52,14 +65,14 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
 
   const handleExportData = () => {
     Alert.alert(
-      'Export Data',
+      t('settings.exportData'),
       'Your medical data will be prepared for download in a secure format.',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: 'Export',
+          text: t('common.export'),
           onPress: () => {
-            Alert.alert('Data Export', 'Data export feature initiated. You will receive an email when ready.');
+            Alert.alert(t('settings.exportData'), t('settings.dataExportInitiated'));
           }
         }
       ]
@@ -134,13 +147,13 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title="Settings"
+        title={t('settings.title')}
         showBackButton
         onBack={onBack}
       />
       
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Account Section */}
+        {/* Language Section */}
         <View style={{ marginTop: 16 }}>
           <Text style={{
             fontSize: 14,
@@ -151,28 +164,50 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
             textTransform: 'uppercase',
             letterSpacing: 0.5
           }}>
-            Account
+            {t('settings.language')}
+          </Text>
+          
+          <SettingItem
+            icon="language-outline"
+            title={t('settings.language')}
+            subtitle={getCurrentLanguageName()}
+            onPress={() => setShowLanguageModal(true)}
+          />
+        </View>
+
+        {/* Account Section */}
+        <View style={{ marginTop: 24 }}>
+          <Text style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#6B7280',
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}>
+            {t('settings.account')}
           </Text>
           
           <SettingItem
             icon="person-outline"
-            title="View Profile"
-            subtitle="See your medical information"
+            title={t('settings.viewProfile')}
+            subtitle={t('settings.viewProfileDescription')}
             onPress={onViewProfile}
           />
           
           <SettingItem
             icon="create-outline"
-            title="Edit Profile"
-            subtitle="Update your medical information"
+            title={t('settings.editProfile')}
+            subtitle={t('settings.editProfileDescription')}
             onPress={onEditProfile}
           />
           
           <SettingItem
             icon="shield-checkmark-outline"
-            title="Privacy & Security"
-            subtitle="Manage your data and security settings"
-            onPress={() => Alert.alert('Privacy & Security', 'Privacy settings would be configured here')}
+            title={t('settings.privacySecurity')}
+            subtitle={t('settings.privacySecurityDescription')}
+            onPress={() => Alert.alert(t('settings.privacySecurity'), 'Privacy settings would be configured here')}
           />
         </View>
 
@@ -192,8 +227,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="notifications-outline"
-            title="Push Notifications"
-            subtitle="Receive appointment reminders"
+            title={t('settings.pushNotifications')}
+            subtitle={t('settings.pushNotificationsDescription')}
             showArrow={false}
             rightComponent={
               <Switch
@@ -207,8 +242,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="mail-outline"
-            title="Email Notifications"
-            subtitle="Receive updates via email"
+            title={t('settings.emailNotifications')}
+            subtitle={t('settings.emailNotificationsDescription')}
             showArrow={false}
             rightComponent={
               <Switch
@@ -421,6 +456,103 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           </Pressable>
         </View>
       </ScrollView>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={showLanguageModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'flex-end'
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            paddingTop: 20,
+            paddingBottom: 40,
+            maxHeight: '70%'
+          }}>
+            {/* Modal Header */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              paddingBottom: 20,
+              borderBottomWidth: 1,
+              borderBottomColor: '#F3F4F6'
+            }}>
+              <Text style={{
+                fontSize: 20,
+                fontWeight: '600',
+                color: '#111827'
+              }}>
+                {t('settings.language')}
+              </Text>
+              <Pressable
+                onPress={() => setShowLanguageModal(false)}
+                style={{
+                  padding: 8,
+                  borderRadius: 20,
+                  backgroundColor: '#F3F4F6'
+                }}
+              >
+                <Ionicons name="close" size={20} color="#6B7280" />
+              </Pressable>
+            </View>
+
+            {/* Language List */}
+            <ScrollView style={{ flex: 1 }}>
+              {availableLanguages.map((language) => (
+                <Pressable
+                  key={language.code}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 16,
+                    paddingHorizontal: 20,
+                    backgroundColor: currentLanguage === language.code ? '#E8F5E8' : 'transparent'
+                  }}
+                  onPress={() => handleLanguageChange(language.code)}
+                >
+                  <Text style={{
+                    fontSize: 24,
+                    marginRight: 16
+                  }}>
+                    {language.flag}
+                  </Text>
+                  
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#111827',
+                      marginBottom: 2
+                    }}>
+                      {language.nativeName}
+                    </Text>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#6B7280'
+                    }}>
+                      {language.name}
+                    </Text>
+                  </View>
+                  
+                  {currentLanguage === language.code && (
+                    <Ionicons name="checkmark-circle" size={24} color="#2E7D32" />
+                  )}
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

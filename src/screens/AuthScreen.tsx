@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import { cn } from '../utils/cn';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function AuthScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -15,6 +16,7 @@ export default function AuthScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { login, signup } = useAuthStore();
+  const { t } = useLanguage();
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -71,9 +73,9 @@ export default function AuthScreen() {
                 fontWeight: 'bold',
                 color: '#2E7D32',
                 marginBottom: 8
-              }}>WemaCARE</Text>
+              }}>{t('app.name')}</Text>
               <Text className="text-gray-600 text-center">
-                {isSignUp ? 'Create your account to get started' : 'Welcome back'}
+                {isSignUp ? t('auth.createAccountPrompt') : t('auth.welcomeBack')}
               </Text>
             </View>
 

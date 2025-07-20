@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AppFooterProps {
   currentScreen: string;
@@ -10,6 +11,7 @@ interface AppFooterProps {
 
 export default function AppFooter({ currentScreen, onNavigate }: AppFooterProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
 
   const tabs = [
     { id: 'home', icon: 'home-outline', activeIcon: 'home', label: 'Home' },

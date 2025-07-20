@@ -6,6 +6,7 @@ import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 import AppHeader from '../components/AppHeader';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HomeScreenProps {
   onStartSymptomInput: () => void;
@@ -26,6 +27,7 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { user, logout } = useAuthStore();
   const { recommendations, appointments, conversations } = useHealthcareStore();
+  const { t } = useLanguage();
   const [showQR, setShowQR] = useState(false);
 
   const upcomingAppointments = appointments
@@ -109,7 +111,7 @@ Generated: ${new Date().toLocaleString()}
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title="WemaCARE"
+        title={t('app.name')}
         rightComponent={
           <View style={{ alignItems: 'center' }}>
             <Pressable
@@ -123,7 +125,7 @@ Generated: ${new Date().toLocaleString()}
             >
               <Ionicons name="settings-outline" size={24} color="#2E7D32" />
             </Pressable>
-            <Text style={{ fontSize: 11, color: '#6B7280' }}>Settings</Text>
+            <Text style={{ fontSize: 11, color: '#6B7280' }}>{t('common.settings')}</Text>
           </View>
         }
       />
@@ -133,20 +135,20 @@ Generated: ${new Date().toLocaleString()}
           <View className="flex-row justify-between items-center">
             <View className="flex-1">
               <Text className="text-xl font-bold text-gray-900">
-                Hello, {user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'}! 👋
+                {t('home.hello', { name: user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User' })}
               </Text>
               <Text className="text-gray-600 mt-1">
-                How are you feeling today?
+                {t('home.howFeeling')}
               </Text>
               <View className="flex-row items-center mt-3">
                 <View className="flex-row items-center mr-4">
                   <View className="w-2 h-2 bg-green-500 rounded-full mr-2"></View>
-                  <Text className="text-green-600 text-sm font-medium">Health Status: Good</Text>
+                  <Text className="text-green-600 text-sm font-medium">{t('home.healthStatus')}</Text>
                 </View>
                 <View className="flex-row items-center">
                   <Ionicons name="calendar-outline" size={12} color="#6B7280" />
                   <Text className="text-gray-500 text-xs ml-1">
-                    {upcomingAppointments.length} upcoming
+                    {t('home.upcomingAppointments', { count: upcomingAppointments.length.toString() })}
                   </Text>
                 </View>
               </View>
@@ -158,7 +160,7 @@ Generated: ${new Date().toLocaleString()}
           {/* Medical QR Code */}
           <View className="px-6 py-6">
             <Text className="text-xl font-bold text-gray-900 mb-4">
-              Medical QR Code
+              {t('home.medicalQRCode')}
             </Text>
             
             <View style={{
@@ -241,7 +243,7 @@ Generated: ${new Date().toLocaleString()}
           {/* Quick Actions */}
           <View className="px-6 py-4">
             <Text className="text-xl font-bold text-gray-900 mb-4">
-              Quick Actions
+              {t('home.quickActions')}
             </Text>
             
             <View className="flex-row space-x-4">
@@ -269,7 +271,7 @@ Generated: ${new Date().toLocaleString()}
                   textAlign: 'center',
                   fontSize: 16
                 }}>
-                  Check Symptoms
+                  {t('home.checkSymptoms')}
                 </Text>
                 <Text style={{
                   color: 'rgba(255, 255, 255, 0.8)',
@@ -277,7 +279,7 @@ Generated: ${new Date().toLocaleString()}
                   textAlign: 'center',
                   marginTop: 4
                 }}>
-                  Get AI recommendations
+                  {t('home.getAIRecommendations')}
                 </Text>
               </Pressable>
               
@@ -298,7 +300,7 @@ Generated: ${new Date().toLocaleString()}
                     fontSize: 14,
                     marginTop: 4
                   }}>
-                    Appointments
+                    {t('home.appointments')}
                   </Text>
                 </Pressable>
                 
@@ -318,7 +320,7 @@ Generated: ${new Date().toLocaleString()}
                     fontSize: 14,
                     marginTop: 4
                   }}>
-                    Messages
+                    {t('home.messages')}
                   </Text>
                 </Pressable>
               </View>
