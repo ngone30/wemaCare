@@ -6,6 +6,7 @@ import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 import AppHeader from '../components/AppHeader';
+import AnimatedHeart from '../components/AnimatedHeart';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HomeScreenProps {
@@ -80,7 +81,7 @@ export default function HomeScreen({
         .slice(0, 3);
 
       const profileData = `
-🏥 WemaCARE Medical Card
+🏥 WemaCare Medical Card
 👤 Name: ${user.name}
 📧 Email: ${user.email}
 🎂 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
@@ -101,7 +102,7 @@ Generated: ${new Date().toLocaleString()}
 
       await Share.share({
         message: profileData,
-        title: 'Medical Card - WemaCARE'
+        title: 'Medical Card - WemaCare'
       });
     } catch (error) {
       Alert.alert('Error', 'Failed to share medical card');
@@ -263,7 +264,7 @@ Generated: ${new Date().toLocaleString()}
                   padding: 12,
                   marginBottom: 8
                 }}>
-                  <Ionicons name="medical-outline" size={32} color="white" />
+                  <AnimatedHeart size={32} color="white" animate={true} />
                 </View>
                 <Text style={{
                   color: 'white',
@@ -656,14 +657,14 @@ Generated: ${new Date().toLocaleString()}
             <View className="items-center">
               <View className="flex-row items-center mb-3">
                 <View style={{
-                  backgroundColor: '#2E7D32',
+                  backgroundColor: '#FF7043',
                   borderRadius: 12,
                   padding: 4,
                   marginRight: 8
                 }}>
-                  <Ionicons name="medical" size={16} color="white" />
+                  <Ionicons name="heart" size={16} color="white" />
                 </View>
-                <Text className="text-gray-700 font-semibold">WemaCARE</Text>
+                <Text className="text-gray-700 font-semibold">WemaCare</Text>
               </View>
               
               <Text className="text-gray-600 text-sm text-center mb-3">
@@ -694,7 +695,7 @@ Generated: ${new Date().toLocaleString()}
               
               <View className="border-t border-gray-300 pt-3 w-full">
                 <Text className="text-xs text-gray-500 text-center">
-                  © 2024 WemaCARE. All rights reserved.
+                  © 2024 WemaCare. All rights reserved.
                 </Text>
                 <Text className="text-xs text-gray-500 text-center mt-1">
                   Emergency: Call 911 | Support: help@wemacare.com

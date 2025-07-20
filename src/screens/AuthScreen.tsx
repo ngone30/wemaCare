@@ -60,13 +60,18 @@ export default function AuthScreen() {
               <View style={{
                 width: 80,
                 height: 80,
-                backgroundColor: '#2E7D32',
+                backgroundColor: '#FF7043',
                 borderRadius: 40,
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: 16
+                marginBottom: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 8,
               }}>
-                <Ionicons name="medical" size={40} color="white" />
+                <Ionicons name="heart" size={40} color="white" />
               </View>
               <Text style={{
                 fontSize: 32,

@@ -360,9 +360,9 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="information-circle-outline"
-            title="About WemaCARE"
+            title="About WemaCare"
             subtitle="Version 1.0.0"
-            onPress={() => Alert.alert('About WemaCARE', 'App information and legal notices would be shown here')}
+            onPress={() => Alert.alert('About WemaCare', 'App information and legal notices would be shown here')}
           />
         </View>
 

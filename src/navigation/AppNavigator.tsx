@@ -6,9 +6,9 @@ import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 
 // Components
 import AppFooter from '../components/AppFooter';
+import SplashScreen from '../components/SplashScreen';
 
 // Screens
-import SplashScreen from '../screens/SplashScreen';
 import AuthScreen from '../screens/AuthScreen';
 import MedicalProfileScreen from '../screens/MedicalProfileScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -24,6 +24,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 export default function AppNavigator() {
   const { isAuthenticated, user, ensureMedicalProfile } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
   
   // Ensure medical profile exists for authenticated users
@@ -52,7 +53,7 @@ export default function AppNavigator() {
   );
 
   if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
 
   if (!isInitialized) {

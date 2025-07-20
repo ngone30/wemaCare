@@ -15,7 +15,7 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ 
-  title = "WemaCARE", 
+  title = "WemaCare", 
   showBackButton = false, 
   onBack,
   rightComponent 
