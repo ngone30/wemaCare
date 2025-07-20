@@ -311,6 +311,75 @@ Format your response as JSON with this structure:
                     {doctor.hospital}
                   </Text>
                 </View>
+
+                {/* Cost Information */}
+                <View style={{
+                  backgroundColor: '#F0FDF4',
+                  borderColor: '#2E7D32',
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 12
+                }}>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text style={{
+                      fontSize: 14,
+                      fontWeight: '600',
+                      color: '#2E7D32'
+                    }}>
+                      💰 Affordable Care
+                    </Text>
+                    <Text style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: '#2E7D32'
+                    }}>
+                      ${doctor.costInfo.estimatedTotal}
+                    </Text>
+                  </View>
+                  
+                  <Text style={{
+                    fontSize: 12,
+                    color: '#6B7280',
+                    textDecorationLine: 'line-through',
+                    marginBottom: 4
+                  }}>
+                    Original: ${doctor.costInfo.consultationFee}
+                  </Text>
+                  
+                  {doctor.costInfo.discounts.length > 0 && (
+                    <View>
+                      <Text style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: '#2E7D32',
+                        marginBottom: 4
+                      }}>
+                        🎉 Available Discounts:
+                      </Text>
+                      {doctor.costInfo.discounts.slice(0, 2).map((discount, idx) => (
+                        <Text key={idx} style={{
+                          fontSize: 11,
+                          color: '#16A34A',
+                          marginLeft: 8
+                        }}>
+                          • {discount.description} ({discount.isPercentage ? `${discount.amount}%` : `${discount.amount}`} off)
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                  
+                  <View className="flex-row items-center mt-2">
+                    <Ionicons name="card-outline" size={12} color="#16A34A" />
+                    <Text style={{
+                      fontSize: 11,
+                      color: '#16A34A',
+                      marginLeft: 4
+                    }}>
+                      Payment: {doctor.costInfo.paymentOptions.slice(0, 2).join(', ')}
+                    </Text>
+                  </View>
+                </View>
                 
                 <Text className="text-gray-700 mb-3 italic">
                   "{doctor.matchReason}"
@@ -385,6 +454,73 @@ Format your response as JSON with this structure:
                 <Text className="text-gray-700 mb-3">
                   Specialties: {hospital.specialties.join(', ')}
                 </Text>
+
+                {/* Hospital Cost & Financial Assistance */}
+                <View style={{
+                  backgroundColor: '#FFF8E1',
+                  borderColor: '#FBC02D',
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  padding: 12,
+                  marginBottom: 12
+                }}>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text style={{
+                      fontSize: 14,
+                      fontWeight: '600',
+                      color: '#F57C00'
+                    }}>
+                      🏥 Hospital Costs
+                    </Text>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: '#F57C00'
+                    }}>
+                      Avg: ${hospital.averageCost}
+                    </Text>
+                  </View>
+                  
+                  <View className="mb-2">
+                    <Text style={{
+                      fontSize: 12,
+                      fontWeight: '500',
+                      color: '#F57C00',
+                      marginBottom: 4
+                    }}>
+                      💳 Insurance Accepted:
+                    </Text>
+                    <Text style={{
+                      fontSize: 11,
+                      color: '#F9A825',
+                      marginLeft: 8
+                    }}>
+                      {hospital.acceptedInsurance.slice(0, 3).join(', ')}
+                      {hospital.acceptedInsurance.length > 3 && ` +${hospital.acceptedInsurance.length - 3} more`}
+                    </Text>
+                  </View>
+                  
+                  {hospital.financialAssistance.available && (
+                    <View>
+                      <Text style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: '#2E7D32',
+                        marginBottom: 4
+                      }}>
+                        🤝 Financial Assistance Available:
+                      </Text>
+                      <Text style={{
+                        fontSize: 11,
+                        color: '#388E3C',
+                        marginLeft: 8,
+                        lineHeight: 16
+                      }}>
+                        {hospital.financialAssistance.description}
+                      </Text>
+                    </View>
+                  )}
+                </View>
                 
                 <Text className="text-gray-700 mb-3 italic">
                   "{hospital.matchReason}"

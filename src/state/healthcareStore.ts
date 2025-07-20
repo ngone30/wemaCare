@@ -48,7 +48,28 @@ const mockDoctors: Doctor[] = [
       { id: '2', date: '2024-01-15', time: '10:30 AM', available: true },
       { id: '3', date: '2024-01-16', time: '02:00 PM', available: true },
     ],
-    languages: ['English', 'Spanish']
+    languages: ['English', 'Spanish'],
+    costInfo: {
+      consultationFee: 200,
+      currency: 'USD',
+      insuranceCovered: true,
+      discounts: [
+        {
+          type: 'First Visit',
+          description: 'New patient discount',
+          amount: 50,
+          isPercentage: false
+        },
+        {
+          type: 'Insurance',
+          description: 'Most insurance plans accepted',
+          amount: 80,
+          isPercentage: true
+        }
+      ],
+      estimatedTotal: 40,
+      paymentOptions: ['Insurance', 'Cash', 'Card', 'Payment Plan']
+    }
   },
   {
     id: '2',
@@ -64,7 +85,28 @@ const mockDoctors: Doctor[] = [
       { id: '4', date: '2024-01-17', time: '11:00 AM', available: true },
       { id: '5', date: '2024-01-18', time: '03:30 PM', available: true },
     ],
-    languages: ['English', 'Mandarin']
+    languages: ['English', 'Mandarin'],
+    costInfo: {
+      consultationFee: 350,
+      currency: 'USD',
+      insuranceCovered: true,
+      discounts: [
+        {
+          type: 'Senior Citizen',
+          description: 'For patients 65+',
+          amount: 15,
+          isPercentage: true
+        },
+        {
+          type: 'Multiple Visits',
+          description: 'Package deal for follow-ups',
+          amount: 100,
+          isPercentage: false
+        }
+      ],
+      estimatedTotal: 70,
+      paymentOptions: ['Insurance', 'HSA/FSA', 'Card', 'Payment Plan']
+    }
   },
   {
     id: '3',
@@ -80,7 +122,28 @@ const mockDoctors: Doctor[] = [
       { id: '6', date: '2024-01-16', time: '01:00 PM', available: true },
       { id: '7', date: '2024-01-19', time: '09:30 AM', available: true },
     ],
-    languages: ['English', 'Spanish']
+    languages: ['English', 'Spanish'],
+    costInfo: {
+      consultationFee: 180,
+      currency: 'USD',
+      insuranceCovered: true,
+      discounts: [
+        {
+          type: 'Student',
+          description: 'Student discount with valid ID',
+          amount: 25,
+          isPercentage: true
+        },
+        {
+          type: 'Community Health',
+          description: 'Free screenings available',
+          amount: 180,
+          isPercentage: false
+        }
+      ],
+      estimatedTotal: 30,
+      paymentOptions: ['Insurance', 'Cash', 'Card', 'Sliding Scale']
+    }
   }
 ];
 
@@ -93,7 +156,14 @@ const mockHospitals: Hospital[] = [
     rating: 4.6,
     specialties: ['Emergency Care', 'Internal Medicine', 'Surgery', 'Pediatrics'],
     emergencyServices: true,
-    distance: 2.3
+    distance: 2.3,
+    averageCost: 300,
+    acceptedInsurance: ['Medicare', 'Medicaid', 'Blue Cross', 'Aetna', 'United Healthcare'],
+    financialAssistance: {
+      available: true,
+      description: 'Income-based payment plans and charity care available',
+      requirements: ['Proof of income', 'Residency verification', 'Application form']
+    }
   },
   {
     id: '2',
@@ -103,7 +173,14 @@ const mockHospitals: Hospital[] = [
     rating: 4.8,
     specialties: ['Cardiology', 'Cardiac Surgery', 'Vascular Surgery'],
     emergencyServices: false,
-    distance: 3.1
+    distance: 3.1,
+    averageCost: 450,
+    acceptedInsurance: ['Medicare', 'Blue Cross', 'Cigna', 'Humana'],
+    financialAssistance: {
+      available: true,
+      description: 'Heart disease patient assistance program with up to 50% reduction',
+      requirements: ['Medical necessity verification', 'Financial hardship documentation']
+    }
   },
   {
     id: '3',
@@ -113,7 +190,14 @@ const mockHospitals: Hospital[] = [
     rating: 4.5,
     specialties: ['Emergency Care', 'Trauma', 'Orthopedics', 'Neurology'],
     emergencyServices: true,
-    distance: 1.8
+    distance: 1.8,
+    averageCost: 250,
+    acceptedInsurance: ['Medicare', 'Medicaid', 'Most major insurance plans'],
+    financialAssistance: {
+      available: true,
+      description: 'Community health center with sliding fee scale based on income',
+      requirements: ['Income verification', 'Local residency (optional for emergency care)']
+    }
   }
 ];
 

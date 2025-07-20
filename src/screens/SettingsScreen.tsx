@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Switch, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, Switch, Alert, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
-import { useHealthcareStore } from '../state/healthcareStore';
-import { SUPPORTED_LANGUAGES } from '../services/language-service';
 import AppHeader from '../components/AppHeader';
-import LanguageSelector from '../components/LanguageSelector';
+import { useTranslation } from '../hooks/useTranslation';
+import { SUPPORTED_LANGUAGES, Language } from '../api/translation-service';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -15,12 +14,13 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }: SettingsScreenProps) {
   const { user, logout } = useAuthStore();
-  const { currentLanguage, setCurrentLanguage } = useHealthcareStore();
+  const { t, currentLanguage, isTranslating, setLanguage } = useTranslation();
   const [notifications, setNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [biometricAuth, setBiometricAuth] = useState(false);
   const [dataSharing, setDataSharing] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   const handleLogout = () => {
@@ -40,19 +40,26 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      'Delete Account',
-      'This action cannot be undone. All your medical data will be permanently deleted.',
+      t('Delete Account'),
+      t('This action cannot be undone. All your medical data will be permanently deleted.'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('Cancel'), style: 'cancel' },
         { 
-          text: 'Delete', 
+          text: t('Delete'), 
           style: 'destructive',
           onPress: () => {
-            Alert.alert('Account Deletion', 'Account deletion feature would be implemented here with proper security measures.');
+            Alert.alert(t('Account Deletion'), t('Account deletion feature would be implemented here with proper security measures.'));
           }
         }
       ]
     );
+  };
+
+  const handleLanguageChange = async (language: Language) => {
+    setShowLanguageModal(false);
+    if (language.code !== currentLanguage.code) {
+      await setLanguage(language);
+    }
   };
 
   const getCurrentLanguageName = () => {
@@ -144,7 +151,7 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title="Settings"
+        title={t("Settings")}
         showBackButton
         onBack={onBack}
       />
@@ -161,14 +168,21 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
             textTransform: 'uppercase',
             letterSpacing: 0.5
           }}>
-            App Preferences
+            {t('App Preferences')}
           </Text>
           
           <SettingItem
             icon="language-outline"
-            title="Language"
-            subtitle={`Current: ${getCurrentLanguageName()}`}
-            onPress={() => setShowLanguageSelector(true)}
+            title={t("Language")}
+            subtitle={`${currentLanguage.nativeName} (${currentLanguage.name})`}
+            onPress={() => setShowLanguageModal(true)}
+            rightComponent={
+              isTranslating ? (
+                <View style={{ marginRight: 8 }}>
+                  <Text style={{ color: '#2E7D32', fontSize: 12 }}>{t('Translating...')}</Text>
+                </View>
+              ) : undefined
+            }
           />
         </View>
 
@@ -183,28 +197,28 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
             textTransform: 'uppercase',
             letterSpacing: 0.5
           }}>
-            Account
+            {t('Account')}
           </Text>
           
           <SettingItem
             icon="person-outline"
-            title="View Profile"
-            subtitle="See your medical information"
+            title={t("View Profile")}
+            subtitle={t("See your medical information")}
             onPress={onViewProfile}
           />
           
           <SettingItem
             icon="create-outline"
-            title="Edit Profile"
-            subtitle="Update your medical information"
+            title={t("Edit Profile")}
+            subtitle={t("Update your medical information")}
             onPress={onEditProfile}
           />
           
           <SettingItem
             icon="shield-checkmark-outline"
-            title="Privacy & Security"
-            subtitle="Manage your data and security settings"
-            onPress={() => Alert.alert('Privacy & Security', 'Privacy settings would be configured here')}
+            title={t("Privacy & Security")}
+            subtitle={t("Manage your data and security settings")}
+            onPress={() => Alert.alert(t('Privacy & Security'), t('Privacy settings would be configured here'))}
           />
         </View>
 
@@ -497,14 +511,89 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
         </View>
       </ScrollView>
 
-      {/* Language Selector Modal */}
-      <LanguageSelector
-        visible={showLanguageSelector}
-        onClose={() => setShowLanguageSelector(false)}
-        onLanguageSelect={(languageCode) => {
-          setCurrentLanguage(languageCode);
-        }}
-      />
+      {/* Language Selection Modal */}
+      <Modal
+        visible={showLanguageModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'flex-end'
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            paddingTop: 20,
+            maxHeight: '80%'
+          }}>
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              paddingBottom: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: '#E5E7EB'
+            }}>
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '600',
+                color: '#111827'
+              }}>
+                {t('Select Language')}
+              </Text>
+              <Pressable
+                onPress={() => setShowLanguageModal(false)}
+                style={{ padding: 8 }}
+              >
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </Pressable>
+            </View>
+            
+            <ScrollView style={{ maxHeight: 400 }}>
+              {SUPPORTED_LANGUAGES.map((language) => (
+                <Pressable
+                  key={language.code}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 16,
+                    paddingHorizontal: 20,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#F3F4F6'
+                  }}
+                  onPress={() => handleLanguageChange(language)}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#111827',
+                      marginBottom: 2
+                    }}>
+                      {language.nativeName}
+                    </Text>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#6B7280'
+                    }}>
+                      {language.name}
+                    </Text>
+                  </View>
+                  
+                  {currentLanguage.code === language.code && (
+                    <Ionicons name="checkmark" size={20} color="#2E7D32" />
+                  )}
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

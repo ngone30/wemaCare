@@ -40,6 +40,20 @@ export interface SymptomInput {
   aiSummary?: string;
 }
 
+export interface CostInfo {
+  consultationFee: number;
+  currency: string;
+  insuranceCovered: boolean;
+  discounts: {
+    type: string;
+    description: string;
+    amount: number;
+    isPercentage: boolean;
+  }[];
+  estimatedTotal: number;
+  paymentOptions: string[];
+}
+
 export interface Doctor {
   id: string;
   name: string;
@@ -53,6 +67,7 @@ export interface Doctor {
   profileImage?: string;
   availableSlots: AppointmentSlot[];
   languages: string[];
+  costInfo: CostInfo;
 }
 
 export interface Hospital {
@@ -65,6 +80,13 @@ export interface Hospital {
   emergencyServices: boolean;
   imageUri?: string;
   distance?: number;
+  averageCost: number;
+  acceptedInsurance: string[];
+  financialAssistance: {
+    available: boolean;
+    description: string;
+    requirements: string[];
+  };
 }
 
 export interface Recommendation {
