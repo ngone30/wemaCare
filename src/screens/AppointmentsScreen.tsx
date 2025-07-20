@@ -128,7 +128,7 @@ export default function AppointmentsScreen({ onBack, onStartChat }: Appointments
         </View>
         
         {/* Simplified placeholder for removed header code */}
-        <View style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8, visibility: 'hidden' }}>
+        <View style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8, opacity: 0 }}>
           <Pressable
             style={{ padding: 8, backgroundColor: '#EBF8FF', borderRadius: 8 }}
             onPress={handleCalendarPress}
