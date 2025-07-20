@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Share, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, Share, Alert, Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 import AppHeader from '../components/AppHeader';
-import AnimatedHeart from '../components/AnimatedHeart';
-import { useLanguage } from '../contexts/LanguageContext';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+
 
 interface HomeScreenProps {
   onStartSymptomInput: () => void;
@@ -28,8 +33,13 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { user, logout } = useAuthStore();
   const { recommendations, appointments, conversations } = useHealthcareStore();
-  const { t } = useLanguage();
   const [showQR, setShowQR] = useState(false);
+  const [isWelcomeExpanded, setIsWelcomeExpanded] = useState(true);
+
+  const toggleWelcomeSection = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsWelcomeExpanded(!isWelcomeExpanded);
+  };
 
   const upcomingAppointments = appointments
     .filter(apt => apt.status === 'confirmed' || apt.status === 'pending')
@@ -112,7 +122,7 @@ Generated: ${new Date().toLocaleString()}
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title={t('app.name')}
+        title="WemaCARE"
         rightComponent={
           <View style={{ alignItems: 'center' }}>
             <Pressable
@@ -126,42 +136,128 @@ Generated: ${new Date().toLocaleString()}
             >
               <Ionicons name="settings-outline" size={24} color="#2E7D32" />
             </Pressable>
-            <Text style={{ fontSize: 11, color: '#6B7280' }}>{t('common.settings')}</Text>
+            <Text style={{ fontSize: 11, color: '#6B7280' }}>Settings</Text>
           </View>
         }
       />
       <View className="flex-1">
-        {/* Welcome Section */}
-        <View className="bg-white px-6 py-4 shadow-sm">
-          <View className="flex-row justify-between items-center">
-            <View className="flex-1">
-              <Text className="text-xl font-bold text-gray-900">
-                {t('home.hello', { name: user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User' })}
+        {/* Collapsible Welcome Section */}
+        <View style={{
+          backgroundColor: '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3
+        }}>
+          {/* Header - Always Visible */}
+          <Pressable 
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 24,
+              paddingVertical: 16,
+              borderBottomWidth: isWelcomeExpanded ? 1 : 0,
+              borderBottomColor: '#F3F4F6'
+            }}
+            onPress={toggleWelcomeSection}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: '#111827'
+              }}>
+                Hello, {user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'}! 👋
               </Text>
-              <Text className="text-gray-600 mt-1">
-                {t('home.howFeeling')}
+              {!isWelcomeExpanded && (
+                <Text style={{
+                  fontSize: 14,
+                  color: '#6B7280',
+                  marginTop: 2
+                }}>
+                  Tap to view details
+                </Text>
+              )}
+            </View>
+            
+            <View style={{
+              padding: 8,
+              backgroundColor: isWelcomeExpanded ? '#E8F5E8' : '#F3F4F6',
+              borderRadius: 20
+            }}>
+              <Ionicons 
+                name={isWelcomeExpanded ? "chevron-up" : "chevron-down"} 
+                size={20} 
+                color={isWelcomeExpanded ? "#2E7D32" : "#6B7280"} 
+              />
+            </View>
+          </Pressable>
+
+          {/* Expandable Content */}
+          {isWelcomeExpanded && (
+            <View style={{
+              paddingHorizontal: 24,
+              paddingBottom: 16
+            }}>
+              <Text style={{
+                fontSize: 16,
+                color: '#6B7280',
+                marginBottom: 12
+              }}>
+                How are you feeling today?
               </Text>
-              <View className="flex-row items-center mt-3">
-                <View className="flex-row items-center mr-4">
-                  <View className="w-2 h-2 bg-green-500 rounded-full mr-2"></View>
-                  <Text className="text-green-600 text-sm font-medium">{t('home.healthStatus')}</Text>
+              
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 8
+              }}>
+                <View style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 24
+                }}>
+                  <View style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: '#2E7D32',
+                    borderRadius: 4,
+                    marginRight: 8
+                  }} />
+                  <Text style={{
+                    color: '#2E7D32',
+                    fontSize: 14,
+                    fontWeight: '500'
+                  }}>
+                    Health Status: Good
+                  </Text>
                 </View>
-                <View className="flex-row items-center">
-                  <Ionicons name="calendar-outline" size={12} color="#6B7280" />
-                  <Text className="text-gray-500 text-xs ml-1">
-                    {t('home.upcomingAppointments', { count: upcomingAppointments.length.toString() })}
+                
+                <View style={{
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }}>
+                  <Ionicons name="calendar-outline" size={14} color="#6B7280" />
+                  <Text style={{
+                    color: '#6B7280',
+                    fontSize: 12,
+                    marginLeft: 4
+                  }}>
+                    {upcomingAppointments.length} upcoming
                   </Text>
                 </View>
               </View>
             </View>
-          </View>
+          )}
         </View>
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {/* Medical QR Code */}
           <View className="px-6 py-6">
             <Text className="text-xl font-bold text-gray-900 mb-4">
-              {t('home.medicalQRCode')}
+              Medical QR Code
             </Text>
             
             <View style={{
@@ -244,7 +340,7 @@ Generated: ${new Date().toLocaleString()}
           {/* Quick Actions */}
           <View className="px-6 py-4">
             <Text className="text-xl font-bold text-gray-900 mb-4">
-              {t('home.quickActions')}
+              Quick Actions
             </Text>
             
             <View className="flex-row space-x-4">
@@ -264,7 +360,7 @@ Generated: ${new Date().toLocaleString()}
                   padding: 12,
                   marginBottom: 8
                 }}>
-                  <AnimatedHeart size={32} color="white" animate={true} />
+                  <Ionicons name="medical-outline" size={32} color="white" />
                 </View>
                 <Text style={{
                   color: 'white',
@@ -272,7 +368,7 @@ Generated: ${new Date().toLocaleString()}
                   textAlign: 'center',
                   fontSize: 16
                 }}>
-                  {t('home.checkSymptoms')}
+                  Check Symptoms
                 </Text>
                 <Text style={{
                   color: 'rgba(255, 255, 255, 0.8)',
@@ -280,7 +376,7 @@ Generated: ${new Date().toLocaleString()}
                   textAlign: 'center',
                   marginTop: 4
                 }}>
-                  {t('home.getAIRecommendations')}
+                  Get AI recommendations
                 </Text>
               </Pressable>
               
@@ -301,7 +397,7 @@ Generated: ${new Date().toLocaleString()}
                     fontSize: 14,
                     marginTop: 4
                   }}>
-                    {t('home.appointments')}
+                    Appointments
                   </Text>
                 </Pressable>
                 
@@ -321,7 +417,7 @@ Generated: ${new Date().toLocaleString()}
                     fontSize: 14,
                     marginTop: 4
                   }}>
-                    {t('home.messages')}
+                    Messages
                   </Text>
                 </Pressable>
               </View>
