@@ -204,7 +204,7 @@ Consider:
     const response = await getOpenAITextResponse([{ role: "user", content: prompt }]);
     
     try {
-      const analysis = JSON.parse(response);
+      const analysis = JSON.parse(response.content);
       
       // Mock enhanced recommendations based on analysis
       return {
