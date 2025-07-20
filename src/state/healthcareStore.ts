@@ -14,7 +14,6 @@ interface HealthcareState {
   messages: Message[];
   currentLanguage: string;
   mentalHealthAssessment: MentalHealthAssessment | null;
-  mentalHealthAssessment: MentalHealthAssessment | null;
   mentalHealthProviders: MentalHealthProvider[];
   mentalHealthFacilities: MentalHealthFacility[];
   currentLanguage: string;

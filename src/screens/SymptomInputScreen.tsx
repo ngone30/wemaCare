@@ -7,7 +7,8 @@ import { Audio } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import { transcribeAudio } from '../api/transcribe-audio';
 import { getOpenAITextResponse } from '../api/chat-service';
-import { analyzeHealthcareNeeds } from '../api/healthcare-analysis';
+import { safeAnalyzeHealthcareNeeds } from '../api/healthcare-analysis-wrapper';
+import { MentalHealthAssessment } from '../api/healthcare-analysis';
 import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { SymptomInput } from '../types/healthcare';
@@ -219,7 +220,7 @@ export default function SymptomInputScreen({ onAnalysisComplete, onBack }: Sympt
     
     try {
       // Use enhanced healthcare analysis that considers medical history and mental health
-      const analysis = await analyzeHealthcareNeeds(symptoms, user);
+      const analysis = await safeAnalyzeHealthcareNeeds(symptoms, user);
       
       // Store mental health assessment if present
       if (analysis.mentalHealthAssessment) {
@@ -259,7 +260,21 @@ export default function SymptomInputScreen({ onAnalysisComplete, onBack }: Sympt
       onAnalysisComplete(symptoms, analysis.analysis);
     } catch (error) {
       console.error('Enhanced analysis error:', error);
-      Alert.alert('Error', 'Failed to analyze symptoms. Please try again.');
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        symptomCount: symptoms.length,
+        userPresent: !!user
+      });
+      
+      Alert.alert(
+        'Analysis Error', 
+        'We encountered an issue while analyzing your symptoms. Please try again or consult with a healthcare provider directly.',
+        [
+          { text: 'Try Again', onPress: () => analyzeSymptoms() },
+          { text: 'Cancel', style: 'cancel' }
+        ]
+      );
     } finally {
       setIsAnalyzing(false);
     }

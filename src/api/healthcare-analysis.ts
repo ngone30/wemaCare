@@ -52,22 +52,23 @@ Please provide a comprehensive analysis that includes:
 6. CULTURAL CONSIDERATIONS: Consider African healthcare context and traditional medicine integration
 7. FOLLOW-UP CARE: Recommended monitoring and care plan
 
-Respond in JSON format:
+IMPORTANT: Respond ONLY with valid JSON format. Do not include any text before or after the JSON. Do not use markdown formatting.
+
 {
-  "analysis": "detailed medical analysis",
+  "analysis": "detailed medical analysis of symptoms and medical history",
   "mentalHealthAssessment": {
-    "riskLevel": "low|moderate|high|critical", 
-    "indicators": ["symptom1", "symptom2"],
-    "recommendations": ["rec1", "rec2"],
-    "requiresImmediateAttention": boolean,
+    "riskLevel": "low",
+    "indicators": ["list any mental health indicators found"],
+    "recommendations": ["specific mental health recommendations"],
+    "requiresImmediateAttention": false,
     "suggestedSpecialists": ["therapist", "psychiatrist", "counselor", "psychologist"]
   },
-  "urgencyLevel": "low|moderate|high|emergency",
-  "reasoning": "explanation of recommendations based on medical history",
-  "specialistsNeeded": ["specialist1", "specialist2"],
-  "hospitalType": "general|specialist|mental_health|emergency",
-  "followUpRecommendations": ["rec1", "rec2"],
-  "culturalConsiderations": "African healthcare context notes"
+  "urgencyLevel": "moderate",
+  "reasoning": "detailed explanation of recommendations based on medical history and symptoms",
+  "specialistsNeeded": ["General Practitioner", "Cardiologist"],
+  "hospitalType": "general",
+  "followUpRecommendations": ["specific follow-up care instructions"],
+  "culturalConsiderations": "African healthcare context and traditional medicine notes"
 }
 `;
 
@@ -81,36 +82,93 @@ Respond in JSON format:
       maxTokens: 3000
     });
 
-    const analysis = JSON.parse(response.content);
+    // Clean the response content to ensure it's valid JSON
+    let cleanContent = response.content.trim();
+    
+    // Remove any markdown code blocks if present
+    if (cleanContent.startsWith('```json')) {
+      cleanContent = cleanContent.replace(/```json\n?/, '').replace(/\n?```$/, '');
+    } else if (cleanContent.startsWith('```')) {
+      cleanContent = cleanContent.replace(/```\n?/, '').replace(/\n?```$/, '');
+    }
+    
+    // Remove any leading/trailing text before/after the JSON object
+    const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanContent = jsonMatch[0];
+    }
+    
+    // Fix common JSON formatting issues
+    cleanContent = cleanContent
+      .replace(/,\s*}/g, '}') // Remove trailing commas before closing braces
+      .replace(/,\s*]/g, ']') // Remove trailing commas before closing brackets
+      .replace(/'/g, '"') // Replace single quotes with double quotes
+      .replace(/(\w+):/g, '"$1":'); // Ensure property names are quoted
+    
+    // One final attempt to extract valid JSON
+    if (!cleanContent.startsWith('{')) {
+      const match = cleanContent.match(/(\{.*\})/s);
+      if (match) {
+        cleanContent = match[1];
+      }
+    }
+
+    let analysis;
+    try {
+      analysis = JSON.parse(cleanContent);
+    } catch (parseError) {
+      console.error('JSON parse error. Raw response:', response.content);
+      console.error('Cleaned content:', cleanContent);
+      throw new Error(`Failed to parse AI response as JSON: ${parseError.message}`);
+    }
+    
+    // Validate required fields and provide defaults
+    if (!analysis || typeof analysis !== 'object') {
+      throw new Error('Invalid analysis object received from AI');
+    }
+    
+    const validatedAnalysis = {
+      analysis: analysis.analysis || "Medical analysis could not be completed.",
+      mentalHealthAssessment: analysis.mentalHealthAssessment || {
+        riskLevel: 'low',
+        indicators: [],
+        recommendations: [],
+        requiresImmediateAttention: false,
+        suggestedSpecialists: []
+      },
+      urgencyLevel: analysis.urgencyLevel || 'moderate',
+      reasoning: analysis.reasoning || "General medical consultation recommended.",
+      specialistsNeeded: analysis.specialistsNeeded || ['General Practitioner'],
+      hospitalType: analysis.hospitalType || 'general',
+      followUpRecommendations: analysis.followUpRecommendations || ['Schedule follow-up appointment', 'Monitor symptoms']
+    };
     
     // Generate doctor recommendations based on analysis
-    const doctors = generateDoctorRecommendations(analysis, user, symptoms);
+    const doctors = generateDoctorRecommendations(validatedAnalysis, user, symptoms);
     
     // Generate hospital recommendations
-    const hospitals = generateHospitalRecommendations(analysis, user);
+    const hospitals = generateHospitalRecommendations(validatedAnalysis, user);
 
     return {
-      analysis: analysis.analysis,
+      analysis: validatedAnalysis.analysis,
       doctors,
       hospitals,
-      mentalHealthAssessment: analysis.mentalHealthAssessment,
-      urgencyLevel: analysis.urgencyLevel,
-      reasoning: analysis.reasoning,
-      followUpRecommendations: analysis.followUpRecommendations
+      mentalHealthAssessment: validatedAnalysis.mentalHealthAssessment,
+      urgencyLevel: validatedAnalysis.urgencyLevel,
+      reasoning: validatedAnalysis.reasoning,
+      followUpRecommendations: validatedAnalysis.followUpRecommendations
     };
 
   } catch (error) {
     console.error('Healthcare analysis error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
     
-    // Fallback analysis
-    return {
-      analysis: "Based on your symptoms and medical history, I recommend consulting with a healthcare professional for proper evaluation.",
-      doctors: generateBasicDoctorRecommendations(symptoms),
-      hospitals: generateBasicHospitalRecommendations(),
-      urgencyLevel: 'moderate',
-      reasoning: "Unable to perform detailed analysis, providing general recommendations.",
-      followUpRecommendations: ["Schedule appointment with primary care physician", "Monitor symptoms", "Seek immediate care if symptoms worsen"]
-    };
+    // Fallback analysis with more comprehensive assessment
+    const fallbackAnalysis = generateFallbackAnalysis(symptoms, user);
+    return fallbackAnalysis;
   }
 };
 
@@ -366,4 +424,83 @@ const generateBasicHospitalRecommendations = (): RecommendedHospital[] => {
       estimatedCost: '$20-100 USD'
     }
   ];
+};
+
+const generateFallbackAnalysis = (
+  symptoms: SymptomInput[], 
+  user: User
+): EnhancedHealthcareRecommendation => {
+  // Basic symptom assessment
+  const symptomTypes = symptoms.map(s => s.type);
+  const hasImageSymptoms = symptomTypes.includes('image');
+  const hasVoiceSymptoms = symptomTypes.includes('voice');
+  const symptomTexts = symptoms.map(s => s.content.toLowerCase());
+  
+  // Simple keyword-based urgency assessment
+  const urgentKeywords = ['severe', 'intense', 'emergency', 'urgent', 'acute', 'sudden', 'chest pain', 'difficulty breathing'];
+  const moderateKeywords = ['pain', 'ache', 'fever', 'headache', 'nausea', 'fatigue'];
+  const mentalHealthKeywords = ['anxiety', 'depressed', 'sad', 'worried', 'stress', 'panic', 'mood'];
+  
+  const hasUrgentSymptoms = symptomTexts.some(text => 
+    urgentKeywords.some(keyword => text.includes(keyword))
+  );
+  
+  const hasModerateSymptoms = symptomTexts.some(text => 
+    moderateKeywords.some(keyword => text.includes(keyword))
+  );
+  
+  const hasMentalHealthSymptoms = symptomTexts.some(text => 
+    mentalHealthKeywords.some(keyword => text.includes(keyword))
+  );
+  
+  // Determine urgency level
+  let urgencyLevel: 'low' | 'moderate' | 'high' | 'emergency' = 'low';
+  if (hasUrgentSymptoms) {
+    urgencyLevel = 'high';
+  } else if (hasModerateSymptoms) {
+    urgencyLevel = 'moderate';
+  }
+  
+  // Generate basic analysis
+  const analysis = `Based on your reported symptoms, a comprehensive medical evaluation is recommended. 
+    Your symptoms include: ${symptoms.map(s => s.content).join(', ')}. 
+    ${user.medicalProfile.medicalConditions.length > 0 ? 
+      `Given your medical history of ${user.medicalProfile.medicalConditions.join(', ')}, ` : ''}
+    it's important to consult with a healthcare professional for proper diagnosis and treatment.`;
+  
+  // Mental health assessment
+  const mentalHealthAssessment: MentalHealthAssessment = {
+    riskLevel: hasMentalHealthSymptoms ? 'moderate' : 'low',
+    indicators: hasMentalHealthSymptoms ? ['Mental health-related symptoms reported'] : [],
+    recommendations: hasMentalHealthSymptoms ? 
+      ['Consider mental health consultation', 'Practice stress management techniques'] : 
+      ['Maintain good mental health practices'],
+    requiresImmediateAttention: false,
+    suggestedSpecialists: hasMentalHealthSymptoms ? ['counselor', 'therapist'] : []
+  };
+  
+  const fallbackAnalysisData = {
+    analysis,
+    mentalHealthAssessment,
+    urgencyLevel,
+    reasoning: "Basic symptom assessment performed due to analysis limitations.",
+    specialistsNeeded: ['General Practitioner'],
+    hospitalType: 'general' as const,
+    followUpRecommendations: [
+      'Schedule appointment with primary care physician',
+      'Monitor symptoms closely',
+      'Seek immediate care if symptoms worsen',
+      'Keep a symptom diary'
+    ]
+  };
+  
+  return {
+    analysis: fallbackAnalysisData.analysis,
+    doctors: generateDoctorRecommendations(fallbackAnalysisData, user, symptoms),
+    hospitals: generateHospitalRecommendations(fallbackAnalysisData, user),
+    mentalHealthAssessment: fallbackAnalysisData.mentalHealthAssessment,
+    urgencyLevel: fallbackAnalysisData.urgencyLevel,
+    reasoning: fallbackAnalysisData.reasoning,
+    followUpRecommendations: fallbackAnalysisData.followUpRecommendations
+  };
 };
