@@ -369,11 +369,16 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
       </View>
       
       <View>
-        <Text className="text-gray-700 font-semibold mb-1">1. Emergency Contact Name *</Text>
-        <Text className="text-gray-500 text-sm mb-2">Enter the full name of your emergency contact</Text>
+        <View className="flex-row items-center mb-2">
+          <Ionicons name="person" size={16} color="#2E7D32" />
+          <Text className="text-gray-700 font-semibold ml-2">1. Emergency Contact Full Name *</Text>
+        </View>
+        <Text className="text-gray-500 text-sm mb-3">
+          📝 Enter the complete first and last name of your emergency contact person
+        </Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="Enter full name (e.g., John Smith)"
+          placeholder="First and Last Name (e.g., John Smith, Mary Johnson)"
           value={profile.emergencyContact.name}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
@@ -384,11 +389,16 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
       </View>
 
       <View>
-        <Text className="text-gray-700 font-semibold mb-1">2. Phone Number *</Text>
-        <Text className="text-gray-500 text-sm mb-2">Enter a phone number where they can be reached 24/7</Text>
+        <View className="flex-row items-center mb-2">
+          <Ionicons name="call" size={16} color="#FBC02D" />
+          <Text className="text-gray-700 font-semibold ml-2">2. Emergency Contact Phone Number *</Text>
+        </View>
+        <Text className="text-gray-500 text-sm mb-3">
+          📞 Enter a phone number where this person can be reached 24/7 in emergencies
+        </Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="Enter phone number (e.g., 555-123-4567)"
+          placeholder="Phone Number (e.g., 555-123-4567, +1-555-123-4567)"
           value={profile.emergencyContact.phone}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
@@ -399,11 +409,16 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
       </View>
 
       <View>
-        <Text className="text-gray-700 font-semibold mb-1">3. Relationship to You *</Text>
-        <Text className="text-gray-500 text-sm mb-2">How is this person related to you?</Text>
+        <View className="flex-row items-center mb-2">
+          <Ionicons name="heart" size={16} color="#FF7043" />
+          <Text className="text-gray-700 font-semibold ml-2">3. Relationship to You *</Text>
+        </View>
+        <Text className="text-gray-500 text-sm mb-3">
+          👥 Specify how this emergency contact person is related to you
+        </Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="Enter relationship (e.g., Spouse, Parent, Sister, Friend)"
+          placeholder="Relationship (e.g., Spouse, Mother, Father, Sister, Brother, Friend)"
           value={profile.emergencyContact.relationship}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
