@@ -91,15 +91,17 @@ export default function HomeScreen({
         .slice(0, 3);
 
       const profileData = `
-🏥 WemaCare Medical Card
-👤 Name: ${user.name}
+🏥 WemaCARE Medical Card
+👤 Name: ${user.fullName || user.name}
 📧 Email: ${user.email}
 🎂 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
 🩸 Blood Type: ${user.medicalProfile.bloodType || 'Not provided'}
+🏠 Address: ${user.address ? `${user.address.city}, ${user.address.country}` : 'Not provided'}
 ⚠️ Allergies: ${user.medicalProfile.allergies.join(', ') || 'None listed'}
 💊 Medications: ${user.medicalProfile.medications.join(', ') || 'None listed'}
 🏥 Conditions: ${user.medicalProfile.medicalConditions.join(', ') || 'None listed'}
-📞 Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.phone})
+📞 Emergency Contact 1: ${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.phone}) - ${user.medicalProfile.emergencyContact.relationship}
+${user.medicalProfile.emergencyContact2 ? `📞 Emergency Contact 2: ${user.medicalProfile.emergencyContact2.name} (${user.medicalProfile.emergencyContact2.phone}) - ${user.medicalProfile.emergencyContact2.relationship}` : ''}
 🏥 Insurance: ${user.medicalProfile.insurance.provider || 'Not provided'}
 
 📋 Recent Diagnoses:

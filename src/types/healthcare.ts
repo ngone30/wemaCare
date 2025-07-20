@@ -2,6 +2,11 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  fullName?: string;
+  address?: {
+    country: string;
+    city: string;
+  };
   medicalProfile: MedicalProfile;
   createdAt: string;
 }
@@ -16,6 +21,11 @@ export interface MedicalProfile {
   medications: string[];
   medicalConditions: string[];
   emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  emergencyContact2?: {
     name: string;
     phone: string;
     relationship: string;

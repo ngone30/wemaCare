@@ -7,7 +7,7 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, name: string) => Promise<boolean>;
+  signup: (email: string, password: string, name: string, additionalData?: any) => Promise<boolean>;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
   ensureMedicalProfile: () => void;
@@ -58,13 +58,15 @@ export const useAuthStore = create<AuthState>()(
         return false;
       },
 
-      signup: async (email: string, password: string, name: string) => {
+      signup: async (email: string, password: string, name: string, additionalData?: any) => {
         // Mock signup
         if (email && password && name) {
           const newUser: User = {
             id: Date.now().toString(),
             email,
             name,
+            fullName: additionalData?.fullName || name,
+            address: additionalData?.address,
             medicalProfile: {
               dateOfBirth: '',
               gender: 'male',
@@ -74,11 +76,12 @@ export const useAuthStore = create<AuthState>()(
               allergies: [],
               medications: [],
               medicalConditions: [],
-              emergencyContact: {
+              emergencyContact: additionalData?.emergencyContacts?.[0] || {
                 name: '',
                 phone: '',
                 relationship: ''
               },
+              emergencyContact2: additionalData?.emergencyContacts?.[1],
               insurance: {
                 provider: '',
                 policyNumber: ''

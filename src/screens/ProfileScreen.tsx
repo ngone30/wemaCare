@@ -33,13 +33,15 @@ export default function ProfileScreen({ onBack, onEditProfile }: ProfileScreenPr
   const shareProfile = async () => {
     try {
       const profileData = `
-WemaCare Medical Card
-Name: ${user.name}
+WemaCARE Medical Card
+Name: ${user.fullName || user.name}
 DOB: ${user.medicalProfile.dateOfBirth || 'Not provided'}
 Blood Type: ${user.medicalProfile.bloodType || 'Not provided'}
+Address: ${user.address ? `${user.address.city}, ${user.address.country}` : 'Not provided'}
 Allergies: ${user.medicalProfile.allergies.join(', ') || 'None listed'}
 Medications: ${user.medicalProfile.medications.join(', ') || 'None listed'}
-Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.phone})
+Emergency Contact 1: ${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.phone}) - ${user.medicalProfile.emergencyContact.relationship}
+${user.medicalProfile.emergencyContact2 ? `Emergency Contact 2: ${user.medicalProfile.emergencyContact2.name} (${user.medicalProfile.emergencyContact2.phone}) - ${user.medicalProfile.emergencyContact2.relationship}` : ''}
       `.trim();
 
       await Share.share({
@@ -206,6 +208,27 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
             </View>
           </View>
 
+          {/* Address Information */}
+          {user.address && (
+            <View className="px-6 py-6 border-t border-gray-200">
+              <Text className="text-xl font-bold text-gray-900 mb-4">
+                Address Information
+              </Text>
+              
+              <View className="space-y-4">
+                <View className="bg-gray-50 rounded-xl p-4">
+                  <Text className="text-gray-600 text-sm">Country</Text>
+                  <Text className="text-gray-900 font-medium text-lg">{user.address.country}</Text>
+                </View>
+                
+                <View className="bg-gray-50 rounded-xl p-4">
+                  <Text className="text-gray-600 text-sm">City</Text>
+                  <Text className="text-gray-900 font-medium text-lg">{user.address.city}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
           {/* Medical History */}
           <View className="px-6 py-4 border-t border-gray-200">
             <Text className="text-xl font-bold text-gray-900 mb-4">
@@ -275,36 +298,83 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
             </View>
           </View>
 
-          {/* Emergency Contact */}
+          {/* Emergency Contacts */}
           <View className="px-6 py-4 border-t border-gray-200">
             <Text className="text-xl font-bold text-gray-900 mb-4">
-              Emergency Contact
+              Emergency Contacts
             </Text>
             
-            <View className="bg-gray-50 rounded-xl p-4">
-              <View className="space-y-2">
-                <View>
-                  <Text className="text-gray-600 text-sm">Name</Text>
-                  <Text className="text-gray-900 font-medium">
-                    {user.medicalProfile.emergencyContact.name || 'Not provided'}
-                  </Text>
-                </View>
-                
-                <View>
-                  <Text className="text-gray-600 text-sm">Phone</Text>
-                  <Text className="text-gray-900 font-medium">
-                    {user.medicalProfile.emergencyContact.phone || 'Not provided'}
-                  </Text>
-                </View>
-                
-                <View>
-                  <Text className="text-gray-600 text-sm">Relationship</Text>
-                  <Text className="text-gray-900 font-medium">
-                    {user.medicalProfile.emergencyContact.relationship || 'Not provided'}
-                  </Text>
+            {/* Primary Emergency Contact */}
+            <View className="mb-4">
+              <Text style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: '#2E7D32',
+                marginBottom: 12
+              }}>Primary Contact</Text>
+              
+              <View className="bg-gray-50 rounded-xl p-4">
+                <View className="space-y-2">
+                  <View>
+                    <Text className="text-gray-600 text-sm">Name</Text>
+                    <Text className="text-gray-900 font-medium">
+                      {user.medicalProfile.emergencyContact.name || 'Not provided'}
+                    </Text>
+                  </View>
+                  
+                  <View>
+                    <Text className="text-gray-600 text-sm">Phone</Text>
+                    <Text className="text-gray-900 font-medium">
+                      {user.medicalProfile.emergencyContact.phone || 'Not provided'}
+                    </Text>
+                  </View>
+                  
+                  <View>
+                    <Text className="text-gray-600 text-sm">Relationship</Text>
+                    <Text className="text-gray-900 font-medium">
+                      {user.medicalProfile.emergencyContact.relationship || 'Not provided'}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
+
+            {/* Secondary Emergency Contact */}
+            {user.medicalProfile.emergencyContact2 && (
+              <View>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: '#FBC02D',
+                  marginBottom: 12
+                }}>Secondary Contact</Text>
+                
+                <View className="bg-gray-50 rounded-xl p-4">
+                  <View className="space-y-2">
+                    <View>
+                      <Text className="text-gray-600 text-sm">Name</Text>
+                      <Text className="text-gray-900 font-medium">
+                        {user.medicalProfile.emergencyContact2.name}
+                      </Text>
+                    </View>
+                    
+                    <View>
+                      <Text className="text-gray-600 text-sm">Phone</Text>
+                      <Text className="text-gray-900 font-medium">
+                        {user.medicalProfile.emergencyContact2.phone}
+                      </Text>
+                    </View>
+                    
+                    <View>
+                      <Text className="text-gray-600 text-sm">Relationship</Text>
+                      <Text className="text-gray-900 font-medium">
+                        {user.medicalProfile.emergencyContact2.relationship}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
 
           {/* Insurance Information */}

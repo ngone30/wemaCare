@@ -18,6 +18,7 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile, i
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [biometricAuth, setBiometricAuth] = useState(false);
   const [dataSharing, setDataSharing] = useState(false);
+  const [offlineMode, setOfflineMode] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -223,6 +224,45 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile, i
               iconColor="#FBC02D"
             />
           )}
+        </View>
+
+        {/* App Settings Section */}
+        <View style={{ marginTop: 24 }}>
+          <Text style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#6B7280',
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}>
+            App Settings
+          </Text>
+          
+          <SettingItem
+            icon="cloud-offline-outline"
+            title="Offline Mode"
+            subtitle="Access basic features without internet"
+            showArrow={false}
+            rightComponent={
+              <Switch
+                value={offlineMode}
+                onValueChange={(value) => {
+                  setOfflineMode(value);
+                  Alert.alert(
+                    'Offline Mode',
+                    value 
+                      ? 'App will now work offline. Some features may be limited.'
+                      : 'App will now require internet connection for full functionality.',
+                    [{ text: 'OK' }]
+                  );
+                }}
+                trackColor={{ false: '#E5E7EB', true: '#2E7D32' }}
+                thumbColor="#FFFFFF"
+              />
+            }
+          />
         </View>
 
         {/* Notifications Section */}
