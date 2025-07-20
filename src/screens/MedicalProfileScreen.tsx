@@ -116,7 +116,7 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
   const steps = [
     'Basic Info',
     'Medical History',
-    'Emergency Contact',
+    'Emergency Contact Details',
     'Insurance'
   ];
 
@@ -345,24 +345,50 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
 
   const renderEmergencyContact = () => (
     <View className="space-y-4">
+      {/* Helper Text */}
+      <View style={{
+        backgroundColor: '#E8F5E8',
+        borderColor: '#2E7D32',
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16
+      }}>
+        <View className="flex-row items-center mb-2">
+          <Ionicons name="information-circle" size={20} color="#2E7D32" />
+          <Text style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#2E7D32',
+            marginLeft: 8
+          }}>Emergency Contact Information</Text>
+        </View>
+        <Text className="text-sm text-gray-700 leading-relaxed">
+          Please provide the details of someone we can contact in case of an emergency. Fill in each field below:
+        </Text>
+      </View>
+      
       <View>
-        <Text className="text-gray-700 font-medium mb-2">Contact Name</Text>
+        <Text className="text-gray-700 font-semibold mb-1">1. Emergency Contact Name *</Text>
+        <Text className="text-gray-500 text-sm mb-2">Enter the full name of your emergency contact</Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="Full name"
+          placeholder="Enter full name (e.g., John Smith)"
           value={profile.emergencyContact.name}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
             emergencyContact: { ...prev.emergencyContact, name: text }
           }))}
+          autoCapitalize="words"
         />
       </View>
 
       <View>
-        <Text className="text-gray-700 font-medium mb-2">Phone Number</Text>
+        <Text className="text-gray-700 font-semibold mb-1">2. Phone Number *</Text>
+        <Text className="text-gray-500 text-sm mb-2">Enter a phone number where they can be reached 24/7</Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="(555) 123-4567"
+          placeholder="Enter phone number (e.g., 555-123-4567)"
           value={profile.emergencyContact.phone}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
@@ -373,15 +399,17 @@ export default function MedicalProfileScreen({ onComplete, onBack, onSettings }:
       </View>
 
       <View>
-        <Text className="text-gray-700 font-medium mb-2">Relationship</Text>
+        <Text className="text-gray-700 font-semibold mb-1">3. Relationship to You *</Text>
+        <Text className="text-gray-500 text-sm mb-2">How is this person related to you?</Text>
         <TextInput
           className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900"
-          placeholder="e.g., Spouse, Parent, Sibling"
+          placeholder="Enter relationship (e.g., Spouse, Parent, Sister, Friend)"
           value={profile.emergencyContact.relationship}
           onChangeText={(text) => setProfile(prev => ({
             ...prev,
             emergencyContact: { ...prev.emergencyContact, relationship: text }
           }))}
+          autoCapitalize="words"
         />
       </View>
     </View>
