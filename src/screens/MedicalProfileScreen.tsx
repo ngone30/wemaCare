@@ -5,12 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import { MedicalProfile } from '../types/healthcare';
 import { cn } from '../utils/cn';
+import AppHeader from '../components/AppHeader';
 
 interface MedicalProfileScreenProps {
   onComplete: () => void;
+  onBack?: () => void;
 }
 
-export default function MedicalProfileScreen({ onComplete }: MedicalProfileScreenProps) {
+export default function MedicalProfileScreen({ onComplete, onBack }: MedicalProfileScreenProps) {
   const { user, updateUser } = useAuthStore();
   const [profile, setProfile] = useState<MedicalProfile>(user?.medicalProfile || {
     dateOfBirth: '',
@@ -247,7 +249,12 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
             onChangeText={setAllergyInput}
           />
           <Pressable
-            className="bg-blue-500 rounded-xl px-4 py-3"
+            style={{
+              backgroundColor: '#2E7D32',
+              borderRadius: 12,
+              paddingHorizontal: 16,
+              paddingVertical: 12
+            }}
             onPress={addAllergy}
           >
             <Ionicons name="add" size={20} color="white" />
@@ -276,7 +283,12 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
             onChangeText={setMedicationInput}
           />
           <Pressable
-            className="bg-blue-500 rounded-xl px-4 py-3"
+            style={{
+              backgroundColor: '#2E7D32',
+              borderRadius: 12,
+              paddingHorizontal: 16,
+              paddingVertical: 12
+            }}
             onPress={addMedication}
           >
             <Ionicons name="add" size={20} color="white" />
@@ -305,7 +317,12 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
             onChangeText={setConditionInput}
           />
           <Pressable
-            className="bg-blue-500 rounded-xl px-4 py-3"
+            style={{
+              backgroundColor: '#2E7D32',
+              borderRadius: 12,
+              paddingHorizontal: 16,
+              paddingVertical: 12
+            }}
             onPress={addCondition}
           >
             <Ionicons name="add" size={20} color="white" />
@@ -473,22 +490,28 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <AppHeader 
+        title="Medical Profile"
+        showBackButton={!!onBack}
+        onBack={onBack}
+      />
       <View className="flex-1">
-        {/* Header */}
+        {/* Subtitle and Progress */}
         <View className="px-6 py-4 border-b border-gray-200">
-          <Text className="text-2xl font-bold text-gray-900 mb-2">Medical Profile</Text>
-          <Text className="text-gray-600">Help us provide better recommendations</Text>
+          <Text className="text-gray-600 mb-4">Help us provide better recommendations</Text>
           
           {/* Progress Indicator */}
-          <View className="flex-row mt-4 space-x-2">
+          <View className="flex-row space-x-2">
             {steps.map((step, index) => (
               <View
                 key={index}
-                className={cn(
-                  "flex-1 h-2 rounded-full",
-                  index <= currentStep ? "bg-blue-500" : "bg-gray-200"
-                )}
+                style={{
+                  flex: 1,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: index <= currentStep ? '#2E7D32' : '#E5E7EB'
+                }}
               />
             ))}
           </View>
@@ -506,10 +529,19 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
         <View className="px-6 py-4 border-t border-gray-200 flex-row space-x-3">
           {currentStep > 0 && (
             <Pressable
-              className="flex-1 bg-gray-100 rounded-xl py-4"
+              style={{
+                flex: 1,
+                backgroundColor: '#F3F4F6',
+                borderRadius: 12,
+                paddingVertical: 16
+              }}
               onPress={() => setCurrentStep(currentStep - 1)}
             >
-              <Text className="text-gray-700 text-center font-semibold">Previous</Text>
+              <Text style={{
+                color: '#374151',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>Previous</Text>
             </Pressable>
           )}
           
@@ -534,6 +566,6 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

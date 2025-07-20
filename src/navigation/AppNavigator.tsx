@@ -70,6 +70,10 @@ export default function AppNavigator() {
           setShowMedicalProfile(false);
           setCurrentScreen('home');
         }}
+        onBack={showMedicalProfile ? () => {
+          setShowMedicalProfile(false);
+          setCurrentScreen('settings');
+        } : undefined}
       />
     );
   }
