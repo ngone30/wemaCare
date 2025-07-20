@@ -6,7 +6,6 @@ import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 
 // Components
 import AppFooter from '../components/AppFooter';
-import SplashScreen from '../components/SplashScreen';
 
 // Screens
 import AuthScreen from '../screens/AuthScreen';
@@ -49,10 +48,6 @@ export default function AppNavigator() {
     !user.medicalProfile.height || 
     !user.medicalProfile.weight
   );
-
-  if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
-  }
 
   if (!isInitialized) {
     return (
