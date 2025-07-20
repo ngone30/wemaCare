@@ -12,6 +12,14 @@
     },
     "android": {
       "edgeToEdgeEnabled": true
-    }
+    },
+    "plugins": [
+      "expo-build-properties",
+      "expo-font",
+      "expo-mail-composer",
+      "expo-sqlite",
+      "expo-video",
+      "expo-web-browser"
+    ]
   }
 }

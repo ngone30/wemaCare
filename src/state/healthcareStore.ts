@@ -13,10 +13,9 @@ interface HealthcareState {
   conversations: Conversation[];
   messages: Message[];
   currentLanguage: string;
-  mentalHealthAssessment: MentalHealthAssessment | null;
-  mentalHealthProviders: MentalHealthProvider[];
-  mentalHealthFacilities: MentalHealthFacility[];
-  currentLanguage: string;
+  mentalHealthAssessment: any | null;
+  mentalHealthProviders: any[];
+  mentalHealthFacilities: any[];
   
   // Actions
   setSymptoms: (symptoms: SymptomInput[]) => void;
