@@ -1,7 +1,6 @@
 import { getOpenAITextResponse } from './chat-service';
 import { AIMessage } from '../types/ai';
-import { User } from '../state/authStore';
-import { SymptomInput, RecommendedDoctor, RecommendedHospital } from '../types/healthcare';
+import { SymptomInput, RecommendedDoctor, RecommendedHospital, User } from '../types/healthcare';
 
 export interface MentalHealthAssessment {
   riskLevel: 'low' | 'moderate' | 'high' | 'critical';
@@ -162,8 +161,8 @@ IMPORTANT: Respond ONLY with valid JSON format. Do not include any text before o
   } catch (error) {
     console.error('Healthcare analysis error:', error);
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack
+      message: error as string.message,
+      stack: error as string.stack
     });
     
     // Fallback analysis with more comprehensive assessment

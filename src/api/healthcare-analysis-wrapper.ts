@@ -1,6 +1,5 @@
 import { analyzeHealthcareNeeds, EnhancedHealthcareRecommendation } from './healthcare-analysis';
-import { SymptomInput } from '../types/healthcare';
-import { User } from '../state/authStore';
+import { SymptomInput, User } from '../types/healthcare';
 
 /**
  * Safe wrapper for healthcare analysis that ensures we always return a valid result
@@ -27,7 +26,7 @@ export const safeAnalyzeHealthcareNeeds = async (
           specialty: 'General Medicine',
           hospital: 'Lagos University Teaching Hospital',
           rating: 4.7,
-          experience: '12 years',
+          experience: 12,
           languages: ['English', 'Igbo', 'Yoruba'],
           phone: '+234-123-456-789',
           email: 'dr.okonkwo@luth.edu.ng',
@@ -42,7 +41,7 @@ export const safeAnalyzeHealthcareNeeds = async (
           specialty: 'Internal Medicine',
           hospital: 'Aga Khan University Hospital',
           rating: 4.8,
-          experience: '15 years',
+          experience: 15,
           languages: ['English', 'Swahili'],
           phone: '+254-700-123-456',
           email: 'dr.asante@aku.edu',
