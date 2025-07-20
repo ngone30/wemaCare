@@ -158,21 +158,26 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
       <View>
         <Text className="text-gray-700 font-medium mb-2">Gender</Text>
         <View className="flex-row space-x-3">
-          {['male', 'female', 'other'].map((gender) => (
+          {['male', 'female'].map((gender) => (
             <Pressable
               key={gender}
-              className={cn(
-                "flex-1 py-3 px-4 rounded-xl border",
-                profile.gender === gender 
-                  ? "bg-blue-500 border-blue-500" 
-                  : "bg-gray-50 border-gray-200"
-              )}
+              style={{
+                flex: 1,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderRadius: 12,
+                borderWidth: 1,
+                backgroundColor: profile.gender === gender ? '#2E7D32' : '#F9FAFB',
+                borderColor: profile.gender === gender ? '#2E7D32' : '#E5E7EB'
+              }}
               onPress={() => setProfile(prev => ({ ...prev, gender: gender as any }))}
             >
-              <Text className={cn(
-                "text-center capitalize font-medium",
-                profile.gender === gender ? "text-white" : "text-gray-700"
-              )}>
+              <Text style={{
+                textAlign: 'center',
+                textTransform: 'capitalize',
+                fontWeight: '500',
+                color: profile.gender === gender ? 'white' : '#374151'
+              }}>
                 {gender}
               </Text>
             </Pressable>
@@ -509,7 +514,12 @@ export default function MedicalProfileScreen({ onComplete }: MedicalProfileScree
           )}
           
           <Pressable
-            className="flex-1 bg-blue-500 rounded-xl py-4"
+            style={{
+              flex: 1,
+              backgroundColor: '#2E7D32',
+              borderRadius: 12,
+              paddingVertical: 16
+            }}
             onPress={() => {
               if (currentStep < steps.length - 1) {
                 setCurrentStep(currentStep + 1);

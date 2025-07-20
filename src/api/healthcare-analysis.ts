@@ -45,7 +45,7 @@ ${symptoms.map((symptom, index) => `${index + 1}. ${symptom.content} (${symptom.
 Please provide a comprehensive analysis that includes:
 
 1. MEDICAL ANALYSIS: Detailed assessment considering both current symptoms and medical history
-2. MENTAL HEALTH SCREENING: Assess if symptoms indicate mental health concerns (depression, anxiety, stress, trauma, etc.)
+2. MENTAL HEALTH SCREENING: Only flag mental health concerns if symptoms explicitly mention psychological/emotional distress, mood disorders, anxiety, depression, trauma, or mental health symptoms. Do not recommend mental health services for purely physical symptoms.
 3. URGENCY LEVEL: Rate as low/moderate/high/emergency
 4. SPECIALIST RECOMMENDATIONS: Specific types of doctors needed
 5. HOSPITAL RECOMMENDATIONS: Type of facilities required
@@ -58,10 +58,10 @@ IMPORTANT: Respond ONLY with valid JSON format. Do not include any text before o
   "analysis": "detailed medical analysis of symptoms and medical history",
   "mentalHealthAssessment": {
     "riskLevel": "low",
-    "indicators": ["list any mental health indicators found"],
-    "recommendations": ["specific mental health recommendations"],
+    "indicators": ["list ONLY explicit mental health indicators like depression, anxiety, suicidal thoughts, trauma, etc."],
+    "recommendations": ["specific mental health recommendations ONLY if clear mental health symptoms present"],
     "requiresImmediateAttention": false,
-    "suggestedSpecialists": ["therapist", "psychiatrist", "counselor", "psychologist"]
+    "suggestedSpecialists": ["ONLY suggest if clear mental health symptoms: therapist, psychiatrist, counselor, psychologist"]
   },
   "urgencyLevel": "moderate",
   "reasoning": "detailed explanation of recommendations based on medical history and symptoms",
@@ -191,7 +191,7 @@ const generateDoctorRecommendations = (
   symptoms: SymptomInput[]
 ): RecommendedDoctor[] => {
   const specialists = analysis.specialistsNeeded || ['General Practitioner'];
-  const isMentalHealth = analysis.mentalHealthAssessment?.riskLevel !== 'low';
+  const isMentalHealth = analysis.mentalHealthAssessment?.riskLevel !== 'low' && analysis.mentalHealthAssessment?.indicators.length > 0;
   
   const doctors: RecommendedDoctor[] = [
     {
@@ -272,7 +272,7 @@ const generateHospitalRecommendations = (
   user: User
 ): RecommendedHospital[] => {
   const hospitalType = analysis.hospitalType || 'general';
-  const isMentalHealth = analysis.mentalHealthAssessment?.riskLevel !== 'low';
+  const isMentalHealth = analysis.mentalHealthAssessment?.riskLevel !== 'low' && analysis.mentalHealthAssessment?.indicators.length > 0;
   
   const hospitals: RecommendedHospital[] = [
     {
@@ -439,7 +439,7 @@ const generateFallbackAnalysis = (
   // Simple keyword-based urgency assessment
   const urgentKeywords = ['severe', 'intense', 'emergency', 'urgent', 'acute', 'sudden', 'chest pain', 'difficulty breathing'];
   const moderateKeywords = ['pain', 'ache', 'fever', 'headache', 'nausea', 'fatigue'];
-  const mentalHealthKeywords = ['anxiety', 'depressed', 'sad', 'worried', 'stress', 'panic', 'mood'];
+  const mentalHealthKeywords = ['depression', 'depressed', 'anxiety', 'panic attack', 'suicidal', 'self-harm', 'mental health', 'therapy', 'psychiatrist', 'psychologist', 'mood disorder', 'bipolar', 'schizophrenia', 'trauma', 'ptsd', 'eating disorder'];
   
   const hasUrgentSymptoms = symptomTexts.some(text => 
     urgentKeywords.some(keyword => text.includes(keyword))
@@ -468,13 +468,13 @@ const generateFallbackAnalysis = (
       `Given your medical history of ${user.medicalProfile.medicalConditions.join(', ')}, ` : ''}
     it's important to consult with a healthcare professional for proper diagnosis and treatment.`;
   
-  // Mental health assessment
+  // Mental health assessment - only flag if explicit mental health symptoms
   const mentalHealthAssessment: MentalHealthAssessment = {
     riskLevel: hasMentalHealthSymptoms ? 'moderate' : 'low',
-    indicators: hasMentalHealthSymptoms ? ['Mental health-related symptoms reported'] : [],
+    indicators: hasMentalHealthSymptoms ? ['Explicit mental health symptoms mentioned'] : [],
     recommendations: hasMentalHealthSymptoms ? 
-      ['Consider mental health consultation', 'Practice stress management techniques'] : 
-      ['Maintain good mental health practices'],
+      ['Consider mental health consultation for reported psychological symptoms', 'Practice stress management techniques'] : 
+      [],
     requiresImmediateAttention: false,
     suggestedSpecialists: hasMentalHealthSymptoms ? ['counselor', 'therapist'] : []
   };
