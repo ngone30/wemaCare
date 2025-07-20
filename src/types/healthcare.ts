@@ -87,6 +87,23 @@ export interface Hospital {
     description: string;
     requirements: string[];
   };
+  website?: string;
+  hours?: {
+    monday?: { open: string; close: string };
+    tuesday?: { open: string; close: string };
+    wednesday?: { open: string; close: string };
+    thursday?: { open: string; close: string };
+    friday?: { open: string; close: string };
+    saturday?: { open: string; close: string };
+    sunday?: { open: string; close: string };
+  };
+  services?: string[];
+  reviews?: {
+    rating: number;
+    comment: string;
+    date: string;
+    patientType?: string;
+  }[];
 }
 
 export interface Recommendation {

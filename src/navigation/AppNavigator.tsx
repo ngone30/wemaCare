@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../state/authStore';
-import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
+import { RecommendedDoctor, RecommendedHospital, SymptomInput } from '../types/healthcare';
 
 // Components
 import AppFooter from '../components/AppFooter';
@@ -14,6 +14,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SymptomInputScreen from '../screens/SymptomInputScreen';
 import RecommendationsScreen from '../screens/RecommendationsScreen';
 import DoctorDetailScreen from '../screens/DoctorDetailScreen';
+import HospitalDetailScreen from '../screens/HospitalDetailScreen';
 import ChatScreen from '../screens/ChatScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import MessagesScreen from '../screens/MessagesScreen';
@@ -35,6 +36,7 @@ export default function AppNavigator() {
   const [showMedicalProfile, setShowMedicalProfile] = useState(false);
   const [currentScreen, setCurrentScreen] = useState('home');
   const [selectedDoctor, setSelectedDoctor] = useState<RecommendedDoctor | null>(null);
+  const [selectedHospital, setSelectedHospital] = useState<RecommendedHospital | null>(null);
   const [chatDoctorId, setChatDoctorId] = useState<string | null>(null);
   const [symptomsData, setSymptomsData] = useState<{
     symptoms: SymptomInput[];
@@ -99,6 +101,10 @@ export default function AppNavigator() {
             onSelectDoctor={(doctor) => {
               setSelectedDoctor(doctor);
               setCurrentScreen('doctor-detail');
+            }}
+            onSelectHospital={(hospital) => {
+              setSelectedHospital(hospital);
+              setCurrentScreen('hospital-detail');
             }}
             onBackToInput={() => {
               setCurrentScreen('symptom-input');
@@ -214,6 +220,33 @@ export default function AppNavigator() {
         );
         break;
 
+      case 'hospital-detail':
+        screenContent = selectedHospital ? (
+          <HospitalDetailScreen
+            hospital={selectedHospital}
+            onBack={() => {
+              if (symptomsData) {
+                setCurrentScreen('recommendations');
+              } else {
+                setCurrentScreen('home');
+              }
+            }}
+          />
+        ) : (
+          <HomeScreen
+            onStartSymptomInput={() => setCurrentScreen('symptom-input')}
+            onViewProfile={() => setCurrentScreen('profile')}
+            onViewAppointments={() => setCurrentScreen('appointments')}
+            onViewMessages={() => setCurrentScreen('messages')}
+            onSelectDoctor={(doctor) => {
+              setSelectedDoctor(doctor);
+              setCurrentScreen('doctor-detail');
+            }}
+            onViewSettings={() => setCurrentScreen('settings')}
+          />
+        );
+        break;
+
       case 'settings':
         screenContent = (
           <SettingsScreen
@@ -255,6 +288,7 @@ export default function AppNavigator() {
               if (screen === 'home') {
                 setSymptomsData(null);
                 setSelectedDoctor(null);
+                setSelectedHospital(null);
                 setChatDoctorId(null);
               }
             }} 

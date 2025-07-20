@@ -18,6 +18,7 @@ interface RecommendationsScreenProps {
   symptoms: SymptomInput[];
   analysis: string;
   onSelectDoctor: (doctor: RecommendedDoctor) => void;
+  onSelectHospital: (hospital: RecommendedHospital) => void;
   onBackToInput: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function RecommendationsScreen({
   symptoms, 
   analysis, 
   onSelectDoctor, 
+  onSelectHospital,
   onBackToInput 
 }: RecommendationsScreenProps) {
   const { setRecommendations, recommendations, setMentalHealthAssessment, setMentalHealthProviders, setMentalHealthFacilities, currentLanguage } = useHealthcareStore();
@@ -32,6 +34,7 @@ export default function RecommendationsScreen({
   const [loading, setLoading] = useState(true);
   const [showMentalHealthSupport, setShowMentalHealthSupport] = useState(false);
   const [mentalHealthAssessment, setMentalHealthAssessmentLocal] = useState<any>(null);
+  const [expandedSummary, setExpandedSummary] = useState(false);
 
   useEffect(() => {
     generateRecommendations();
@@ -261,14 +264,53 @@ Format your response as JSON with this structure:
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {/* Analysis Summary */}
-          <View className="px-6 py-4 bg-blue-50 border-b border-blue-100">
-            <Text className="text-lg font-semibold text-blue-900 mb-2">
-              Symptom Analysis Summary
+          <Pressable
+            style={{
+              paddingHorizontal: 24,
+              paddingVertical: 16,
+              backgroundColor: '#E8F5E8',
+              borderBottomWidth: 1,
+              borderBottomColor: '#2E7D32'
+            }}
+            onPress={() => setExpandedSummary(!expandedSummary)}
+          >
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 8
+            }}>
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '600',
+                color: '#2E7D32'
+              }}>
+                Symptom Analysis Summary
+              </Text>
+              <Ionicons 
+                name={expandedSummary ? "chevron-up" : "chevron-down"} 
+                size={20} 
+                color="#2E7D32" 
+              />
+            </View>
+            <Text style={{
+              color: '#1B5E20',
+              lineHeight: 22,
+              fontSize: 15
+            }}>
+              {expandedSummary ? analysis : `${analysis.substring(0, 150)}...`}
             </Text>
-            <Text className="text-blue-800 leading-relaxed">
-              {analysis.substring(0, 200)}...
-            </Text>
-          </View>
+            {!expandedSummary && (
+              <Text style={{
+                color: '#2E7D32',
+                fontWeight: '500',
+                marginTop: 8,
+                fontSize: 14
+              }}>
+                Tap to read full analysis
+              </Text>
+            )}
+          </Pressable>
 
           {/* Recommended Doctors */}
           <View className="px-6 py-6">
@@ -387,7 +429,12 @@ Format your response as JSON with this structure:
                 
                 <View className="flex-row space-x-3">
                   <Pressable
-                    className="flex-1 bg-blue-500 rounded-lg py-2"
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#2E7D32',
+                      borderRadius: 8,
+                      paddingVertical: 8
+                    }}
                     onPress={() => onSelectDoctor(doctor)}
                   >
                     <Text className="text-white text-center font-semibold">
@@ -413,9 +460,10 @@ Format your response as JSON with this structure:
             </Text>
             
             {recommendations.hospitals.map((hospital) => (
-              <View
+              <Pressable
                 key={hospital.id}
                 className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm"
+                onPress={() => onSelectHospital(hospital)}
               >
                 <View className="flex-row justify-between items-start mb-3">
                   <View className="flex-1">
@@ -526,18 +574,37 @@ Format your response as JSON with this structure:
                   "{hospital.matchReason}"
                 </Text>
                 
-                <Pressable
-                  className="bg-blue-500 rounded-lg py-2"
-                  onPress={() => makePhoneCall(hospital.phone)}
-                >
-                  <View className="flex-row justify-center items-center">
-                    <Ionicons name="call-outline" size={20} color="white" />
-                    <Text className="text-white font-semibold ml-2">
-                      Call Hospital
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
+                <View className="flex-row space-x-3">
+                  <Pressable
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#2E7D32',
+                      borderRadius: 8,
+                      paddingVertical: 8
+                    }}
+                    onPress={() => onSelectHospital(hospital)}
+                  >
+                    <View className="flex-row justify-center items-center">
+                      <Ionicons name="information-circle-outline" size={18} color="white" />
+                      <Text className="text-white font-semibold ml-2">
+                        View Details
+                      </Text>
+                    </View>
+                  </Pressable>
+                  
+                  <Pressable
+                    style={{
+                      backgroundColor: '#FBC02D',
+                      borderRadius: 8,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8
+                    }}
+                    onPress={() => makePhoneCall(hospital.phone)}
+                  >
+                    <Ionicons name="call-outline" size={18} color="white" />
+                  </Pressable>
+                </View>
+              </Pressable>
             ))}
           </View>
 
