@@ -123,7 +123,7 @@ Generated: ${new Date().toLocaleString()}
             >
               <Ionicons name="settings-outline" size={24} color="#2E7D32" />
             </Pressable>
-            <Text style={{ fontSize: 11, color: '#6B7280' }}>{t('Settings')}</Text>
+            <Text style={{ fontSize: 11, color: '#6B7280' }}>Settings</Text>
           </View>
         }
       />
@@ -136,12 +136,12 @@ Generated: ${new Date().toLocaleString()}
                 Hello, {user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'}! 👋
               </Text>
               <Text className="text-gray-600 mt-1">
-                {t('How are you feeling today?')}
+                How are you feeling today?
               </Text>
               <View className="flex-row items-center mt-3">
                 <View className="flex-row items-center mr-4">
                   <View className="w-2 h-2 bg-green-500 rounded-full mr-2"></View>
-                  <Text className="text-green-600 text-sm font-medium">{t('Health Status: Good')}</Text>
+                  <Text className="text-green-600 text-sm font-medium">Health Status: Good</Text>
                 </View>
                 <View className="flex-row items-center">
                   <Ionicons name="calendar-outline" size={12} color="#6B7280" />
