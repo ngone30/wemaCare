@@ -24,8 +24,6 @@ import SettingsScreen from '../screens/SettingsScreen';
 export default function AppNavigator() {
   const { isAuthenticated, user, ensureMedicalProfile } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const [showSplash, setShowSplash] = useState(true);
   
   // Ensure medical profile exists for authenticated users
   useEffect(() => {
