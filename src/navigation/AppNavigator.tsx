@@ -42,6 +42,7 @@ export default function AppNavigator() {
     symptoms: SymptomInput[];
     analysis: string;
   } | null>(null);
+  const [isSignupFlow, setIsSignupFlow] = useState(false);
 
   // Check if user needs to complete medical profile
   const needsMedicalProfile = user && (
@@ -50,6 +51,13 @@ export default function AppNavigator() {
     !user.medicalProfile.height || 
     !user.medicalProfile.weight
   );
+
+  // Track signup flow
+  React.useEffect(() => {
+    if (needsMedicalProfile) {
+      setIsSignupFlow(true);
+    }
+  }, [needsMedicalProfile]);
 
   if (!isInitialized) {
     return (
@@ -68,12 +76,16 @@ export default function AppNavigator() {
       <MedicalProfileScreen 
         onComplete={() => {
           setShowMedicalProfile(false);
+          setIsSignupFlow(false);
           setCurrentScreen('home');
         }}
         onBack={showMedicalProfile ? () => {
           setShowMedicalProfile(false);
           setCurrentScreen('settings');
         } : undefined}
+        onSettings={() => {
+          setCurrentScreen('settings');
+        }}
       />
     );
   }
@@ -254,9 +266,17 @@ export default function AppNavigator() {
       case 'settings':
         screenContent = (
           <SettingsScreen
-            onBack={() => setCurrentScreen('home')}
+            onBack={() => {
+              if (isSignupFlow && needsMedicalProfile) {
+                // If in signup flow and medical profile incomplete, go back to medical profile
+                setCurrentScreen('home'); // This will trigger medical profile screen
+              } else {
+                setCurrentScreen('home');
+              }
+            }}
             onEditProfile={() => setShowMedicalProfile(true)}
             onViewProfile={() => setCurrentScreen('profile')}
+            isSignupFlow={isSignupFlow}
           />
         );
         break;

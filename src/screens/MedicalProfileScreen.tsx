@@ -10,9 +10,10 @@ import AppHeader from '../components/AppHeader';
 interface MedicalProfileScreenProps {
   onComplete: () => void;
   onBack?: () => void;
+  onSettings?: () => void;
 }
 
-export default function MedicalProfileScreen({ onComplete, onBack }: MedicalProfileScreenProps) {
+export default function MedicalProfileScreen({ onComplete, onBack, onSettings }: MedicalProfileScreenProps) {
   const { user, updateUser } = useAuthStore();
   const [profile, setProfile] = useState<MedicalProfile>(user?.medicalProfile || {
     dateOfBirth: '',
@@ -495,6 +496,18 @@ export default function MedicalProfileScreen({ onComplete, onBack }: MedicalProf
         title="Medical Profile"
         showBackButton={!!onBack}
         onBack={onBack}
+        rightComponent={onSettings && (
+          <Pressable
+            style={{
+              padding: 8,
+              backgroundColor: '#F3F4F6',
+              borderRadius: 20
+            }}
+            onPress={onSettings}
+          >
+            <Ionicons name="settings-outline" size={24} color="#2E7D32" />
+          </Pressable>
+        )}
       />
       <View className="flex-1">
         {/* Subtitle and Progress */}

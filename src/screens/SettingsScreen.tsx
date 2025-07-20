@@ -1,44 +1,32 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Switch, Alert, Modal } from 'react-native';
+import { View, Text, ScrollView, Pressable, Switch, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 import AppHeader from '../components/AppHeader';
-import { useLanguage, availableLanguages } from '../contexts/LanguageContext';
 
 interface SettingsScreenProps {
   onBack: () => void;
-  onEditProfile: () => void;
-  onViewProfile: () => void;
+  onEditProfile?: () => void;
+  onViewProfile?: () => void;
+  isSignupFlow?: boolean;
 }
 
-export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }: SettingsScreenProps) {
+export default function SettingsScreen({ onBack, onEditProfile, onViewProfile, isSignupFlow = false }: SettingsScreenProps) {
   const { user, logout } = useAuthStore();
-  const { currentLanguage, setLanguage, t } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [biometricAuth, setBiometricAuth] = useState(false);
   const [dataSharing, setDataSharing] = useState(false);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
-
-  const handleLanguageChange = async (languageCode: string) => {
-    await setLanguage(languageCode as any);
-    setShowLanguageModal(false);
-  };
-
-  const getCurrentLanguageName = () => {
-    const lang = availableLanguages.find(lang => lang.code === currentLanguage);
-    return lang ? `${lang.flag} ${lang.nativeName}` : 'English';
-  };
 
   const handleLogout = () => {
     Alert.alert(
-      t('settings.signOut'),
-      t('settings.confirmSignOut'),
+      'Sign Out',
+      'Are you sure you want to sign out?',
       [
-        { text: t('common.cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         { 
-          text: t('settings.signOut'), 
+          text: 'Sign Out', 
           style: 'destructive',
           onPress: logout 
         }
@@ -48,15 +36,15 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      t('settings.deleteAccount'),
-      t('settings.confirmDeleteAccount'),
+      'Delete Account',
+      'This action cannot be undone. All your medical data will be permanently deleted.',
       [
-        { text: t('common.cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         { 
-          text: t('common.delete'), 
+          text: 'Delete', 
           style: 'destructive',
           onPress: () => {
-            Alert.alert(t('settings.deleteAccount'), t('settings.accountDeletionInfo'));
+            Alert.alert('Account Deletion', 'Account deletion feature would be implemented here with proper security measures.');
           }
         }
       ]
@@ -65,14 +53,14 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
 
   const handleExportData = () => {
     Alert.alert(
-      t('settings.exportData'),
+      'Export Data',
       'Your medical data will be prepared for download in a secure format.',
       [
-        { text: t('common.cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         { 
-          text: t('common.export'),
+          text: 'Export',
           onPress: () => {
-            Alert.alert(t('settings.exportData'), t('settings.dataExportInitiated'));
+            Alert.alert('Data Export', 'Data export feature initiated. You will receive an email when ready.');
           }
         }
       ]
@@ -85,7 +73,9 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
     subtitle, 
     onPress, 
     showArrow = true, 
-    rightComponent 
+    rightComponent,
+    iconBgColor = '#F3F4F6',
+    iconColor = '#2E7D32'
   }: {
     icon: string;
     title: string;
@@ -93,6 +83,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
     onPress?: () => void;
     showArrow?: boolean;
     rightComponent?: React.ReactNode;
+    iconBgColor?: string;
+    iconColor?: string;
   }) => (
     <Pressable
       style={{
@@ -110,12 +102,12 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: iconBgColor,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 16
       }}>
-        <Ionicons name={icon as any} size={20} color="#2E7D32" />
+        <Ionicons name={icon as any} size={20} color={iconColor} />
       </View>
       
       <View style={{ flex: 1 }}>
@@ -147,36 +139,41 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <AppHeader 
-        title={t('settings.title')}
+        title={isSignupFlow ? "Setup & Settings" : "Settings"}
         showBackButton
         onBack={onBack}
       />
       
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Language Section */}
-        <View style={{ marginTop: 16 }}>
-          <Text style={{
-            fontSize: 14,
-            fontWeight: '600',
-            color: '#6B7280',
-            paddingHorizontal: 20,
-            paddingVertical: 8,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5
+        {/* Welcome Message for Signup Flow */}
+        {isSignupFlow && (
+          <View style={{ 
+            margin: 16, 
+            padding: 16, 
+            backgroundColor: '#E8F5E8', 
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#2E7D32'
           }}>
-            {t('settings.language')}
-          </Text>
-          
-          <SettingItem
-            icon="language-outline"
-            title={t('settings.language')}
-            subtitle={getCurrentLanguageName()}
-            onPress={() => setShowLanguageModal(true)}
-          />
-        </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <Ionicons name="checkmark-circle" size={24} color="#2E7D32" />
+              <Text style={{ 
+                fontSize: 18, 
+                fontWeight: '600', 
+                color: '#2E7D32',
+                marginLeft: 8
+              }}>
+                Welcome to WemaCARE!
+              </Text>
+            </View>
+            <Text style={{ color: '#1F6A24', lineHeight: 20 }}>
+              Configure your preferences and privacy settings. You can change these anytime from your profile.
+            </Text>
+          </View>
+        )}
 
         {/* Account Section */}
-        <View style={{ marginTop: 24 }}>
+        <View style={{ marginTop: isSignupFlow ? 8 : 16 }}>
           <Text style={{
             fontSize: 14,
             fontWeight: '600',
@@ -186,29 +183,46 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
             textTransform: 'uppercase',
             letterSpacing: 0.5
           }}>
-            {t('settings.account')}
+            {isSignupFlow ? 'Profile Setup' : 'Account'}
           </Text>
           
-          <SettingItem
-            icon="person-outline"
-            title={t('settings.viewProfile')}
-            subtitle={t('settings.viewProfileDescription')}
-            onPress={onViewProfile}
-          />
+          {onViewProfile && (
+            <SettingItem
+              icon="person-outline"
+              title="View Profile"
+              subtitle="See your medical information"
+              onPress={onViewProfile}
+            />
+          )}
           
-          <SettingItem
-            icon="create-outline"
-            title={t('settings.editProfile')}
-            subtitle={t('settings.editProfileDescription')}
-            onPress={onEditProfile}
-          />
+          {onEditProfile && (
+            <SettingItem
+              icon="create-outline"
+              title={isSignupFlow ? "Complete Medical Profile" : "Edit Profile"}
+              subtitle={isSignupFlow ? "Finish setting up your medical information" : "Update your medical information"}
+              onPress={onEditProfile}
+              iconBgColor={isSignupFlow ? "#FFF8E1" : "#F3F4F6"}
+              iconColor={isSignupFlow ? "#FBC02D" : "#2E7D32"}
+            />
+          )}
           
           <SettingItem
             icon="shield-checkmark-outline"
-            title={t('settings.privacySecurity')}
-            subtitle={t('settings.privacySecurityDescription')}
-            onPress={() => Alert.alert(t('settings.privacySecurity'), 'Privacy settings would be configured here')}
+            title="Privacy & Security"
+            subtitle="Manage your data and security settings"
+            onPress={() => Alert.alert('Privacy & Security', 'Privacy settings would be configured here')}
           />
+
+          {isSignupFlow && (
+            <SettingItem
+              icon="information-circle-outline"
+              title="App Tutorial"
+              subtitle="Learn how to use WemaCARE effectively"
+              onPress={() => Alert.alert('Tutorial', 'Interactive app tutorial would start here')}
+              iconBgColor="#FFF8E1"
+              iconColor="#FBC02D"
+            />
+          )}
         </View>
 
         {/* Notifications Section */}
@@ -227,8 +241,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="notifications-outline"
-            title={t('settings.pushNotifications')}
-            subtitle={t('settings.pushNotificationsDescription')}
+            title="Push Notifications"
+            subtitle={isSignupFlow ? "Get reminders for appointments and health tips" : "Receive appointment reminders"}
             showArrow={false}
             rightComponent={
               <Switch
@@ -242,8 +256,8 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="mail-outline"
-            title={t('settings.emailNotifications')}
-            subtitle={t('settings.emailNotificationsDescription')}
+            title="Email Notifications"
+            subtitle="Receive updates via email"
             showArrow={false}
             rightComponent={
               <Switch
@@ -254,9 +268,28 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
               />
             }
           />
+
+          {isSignupFlow && (
+            <SettingItem
+              icon="calendar-outline"
+              title="Health Reminders"
+              subtitle="Daily health tips and medication reminders"
+              showArrow={false}
+              rightComponent={
+                <Switch
+                  value={true}
+                  onValueChange={() => {}}
+                  trackColor={{ false: '#E5E7EB', true: '#FBC02D' }}
+                  thumbColor="#FFFFFF"
+                />
+              }
+              iconBgColor="#FFF8E1"
+              iconColor="#FBC02D"
+            />
+          )}
         </View>
 
-        {/* Security Section */}
+        {/* Privacy & Data Section */}
         <View style={{ marginTop: 24 }}>
           <Text style={{
             fontSize: 14,
@@ -267,13 +300,13 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
             textTransform: 'uppercase',
             letterSpacing: 0.5
           }}>
-            Security
+            Privacy & Data
           </Text>
           
           <SettingItem
             icon="finger-print-outline"
             title="Biometric Authentication"
-            subtitle="Use fingerprint or face ID"
+            subtitle={isSignupFlow ? "Use fingerprint or face ID for secure access" : "Use fingerprint or face ID"}
             showArrow={false}
             rightComponent={
               <Switch
@@ -286,38 +319,9 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           />
           
           <SettingItem
-            icon="key-outline"
-            title="Change Password"
-            subtitle="Update your account password"
-            onPress={() => Alert.alert('Change Password', 'Password change form would be shown here')}
-          />
-        </View>
-
-        {/* Data & Privacy Section */}
-        <View style={{ marginTop: 24 }}>
-          <Text style={{
-            fontSize: 14,
-            fontWeight: '600',
-            color: '#6B7280',
-            paddingHorizontal: 20,
-            paddingVertical: 8,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5
-          }}>
-            Data & Privacy
-          </Text>
-          
-          <SettingItem
-            icon="download-outline"
-            title="Export My Data"
-            subtitle="Download your medical information"
-            onPress={handleExportData}
-          />
-          
-          <SettingItem
             icon="analytics-outline"
-            title="Data Sharing"
-            subtitle="Share anonymized data for research"
+            title="Anonymous Data Sharing"
+            subtitle="Help improve healthcare research"
             showArrow={false}
             rightComponent={
               <Switch
@@ -328,7 +332,51 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
               />
             }
           />
+
+          {!isSignupFlow && (
+            <SettingItem
+              icon="download-outline"
+              title="Export My Data"
+              subtitle="Download your medical information"
+              onPress={handleExportData}
+            />
+          )}
         </View>
+
+        {/* App Preferences (Signup Flow) */}
+        {isSignupFlow && (
+          <View style={{ marginTop: 24 }}>
+            <Text style={{
+              fontSize: 14,
+              fontWeight: '600',
+              color: '#6B7280',
+              paddingHorizontal: 20,
+              paddingVertical: 8,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5
+            }}>
+              App Preferences
+            </Text>
+            
+            <SettingItem
+              icon="color-palette-outline"
+              title="Theme"
+              subtitle="Light theme (Dark theme coming soon)"
+              showArrow={false}
+              iconBgColor="#FFEBEE"
+              iconColor="#FF7043"
+            />
+            
+            <SettingItem
+              icon="globe-outline"
+              title="Language"
+              subtitle="English (More languages coming soon)"
+              showArrow={false}
+              iconBgColor="#E8F5E8"
+              iconColor="#2E7D32"
+            />
+          </View>
+        )}
 
         {/* Support Section */}
         <View style={{ marginTop: 24 }}>
@@ -360,199 +408,133 @@ export default function SettingsScreen({ onBack, onEditProfile, onViewProfile }:
           
           <SettingItem
             icon="information-circle-outline"
-            title="About WemaCare"
+            title="About WemaCARE"
             subtitle="Version 1.0.0"
-            onPress={() => Alert.alert('About WemaCare', 'App information and legal notices would be shown here')}
+            onPress={() => Alert.alert('About WemaCARE', 'App information and legal notices would be shown here')}
           />
         </View>
 
-        {/* Danger Zone */}
-        <View style={{ marginTop: 24, marginBottom: 32 }}>
-          <Text style={{
-            fontSize: 14,
-            fontWeight: '600',
-            color: '#6B7280',
-            paddingHorizontal: 20,
-            paddingVertical: 8,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5
-          }}>
-            Account Actions
-          </Text>
-          
-          <Pressable
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 16,
+        {/* Account Actions */}
+        {!isSignupFlow && (
+          <View style={{ marginTop: 24, marginBottom: 32 }}>
+            <Text style={{
+              fontSize: 14,
+              fontWeight: '600',
+              color: '#6B7280',
               paddingHorizontal: 20,
-              backgroundColor: '#FFFFFF',
-              borderBottomWidth: 1,
-              borderBottomColor: '#F3F4F6'
-            }}
-            onPress={handleLogout}
-          >
-            <View style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: '#FEF2F2',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 16
+              paddingVertical: 8,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5
             }}>
-              <Ionicons name="log-out-outline" size={20} color="#FF7043" />
-            </View>
+              Account Actions
+            </Text>
             
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: '#FF7043'
+            <Pressable
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                backgroundColor: '#FFFFFF',
+                borderBottomWidth: 1,
+                borderBottomColor: '#F3F4F6'
+              }}
+              onPress={handleLogout}
+            >
+              <View style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#FEF2F2',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16
               }}>
-                Sign Out
-              </Text>
-            </View>
-          </Pressable>
-          
-          <Pressable
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 16,
-              paddingHorizontal: 20,
-              backgroundColor: '#FFFFFF'
-            }}
-            onPress={handleDeleteAccount}
-          >
-            <View style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: '#FEF2F2',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 16
-            }}>
-              <Ionicons name="trash-outline" size={20} color="#EF4444" />
-            </View>
+                <Ionicons name="log-out-outline" size={20} color="#FF7043" />
+              </View>
+              
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '500',
+                  color: '#FF7043'
+                }}>
+                  Sign Out
+                </Text>
+              </View>
+            </Pressable>
             
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: '#EF4444'
+            <Pressable
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                backgroundColor: '#FFFFFF'
+              }}
+              onPress={handleDeleteAccount}
+            >
+              <View style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#FEF2F2',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16
               }}>
-                Delete Account
-              </Text>
-              <Text style={{
-                fontSize: 14,
-                color: '#6B7280',
-                marginTop: 2
-              }}>
-                Permanently delete your account and data
-              </Text>
-            </View>
-          </Pressable>
-        </View>
-      </ScrollView>
-
-      {/* Language Selection Modal */}
-      <Modal
-        visible={showLanguageModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowLanguageModal(false)}
-      >
-        <View style={{
-          flex: 1,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          justifyContent: 'flex-end'
-        }}>
-          <View style={{
-            backgroundColor: '#FFFFFF',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            paddingTop: 20,
-            paddingBottom: 40,
-            maxHeight: '70%'
-          }}>
-            {/* Modal Header */}
-            <View style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingHorizontal: 20,
-              paddingBottom: 20,
-              borderBottomWidth: 1,
-              borderBottomColor: '#F3F4F6'
-            }}>
-              <Text style={{
-                fontSize: 20,
-                fontWeight: '600',
-                color: '#111827'
-              }}>
-                {t('settings.language')}
-              </Text>
-              <Pressable
-                onPress={() => setShowLanguageModal(false)}
-                style={{
-                  padding: 8,
-                  borderRadius: 20,
-                  backgroundColor: '#F3F4F6'
-                }}
-              >
-                <Ionicons name="close" size={20} color="#6B7280" />
-              </Pressable>
-            </View>
-
-            {/* Language List */}
-            <ScrollView style={{ flex: 1 }}>
-              {availableLanguages.map((language) => (
-                <Pressable
-                  key={language.code}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingVertical: 16,
-                    paddingHorizontal: 20,
-                    backgroundColor: currentLanguage === language.code ? '#E8F5E8' : 'transparent'
-                  }}
-                  onPress={() => handleLanguageChange(language.code)}
-                >
-                  <Text style={{
-                    fontSize: 24,
-                    marginRight: 16
-                  }}>
-                    {language.flag}
-                  </Text>
-                  
-                  <View style={{ flex: 1 }}>
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: '500',
-                      color: '#111827',
-                      marginBottom: 2
-                    }}>
-                      {language.nativeName}
-                    </Text>
-                    <Text style={{
-                      fontSize: 14,
-                      color: '#6B7280'
-                    }}>
-                      {language.name}
-                    </Text>
-                  </View>
-                  
-                  {currentLanguage === language.code && (
-                    <Ionicons name="checkmark-circle" size={24} color="#2E7D32" />
-                  )}
-                </Pressable>
-              ))}
-            </ScrollView>
+                <Ionicons name="trash-outline" size={20} color="#EF4444" />
+              </View>
+              
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '500',
+                  color: '#EF4444'
+                }}>
+                  Delete Account
+                </Text>
+                <Text style={{
+                  fontSize: 14,
+                  color: '#6B7280',
+                  marginTop: 2
+                }}>
+                  Permanently delete your account and data
+                </Text>
+              </View>
+            </Pressable>
           </View>
-        </View>
-      </Modal>
+        )}
+
+        {/* Signup Flow Completion Message */}
+        {isSignupFlow && (
+          <View style={{ 
+            margin: 16, 
+            marginTop: 24,
+            marginBottom: 32,
+            padding: 16, 
+            backgroundColor: '#FFF8E1', 
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#FBC02D'
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <Ionicons name="bulb" size={24} color="#FBC02D" />
+              <Text style={{ 
+                fontSize: 16, 
+                fontWeight: '600', 
+                color: '#8B6914',
+                marginLeft: 8
+              }}>
+                You're All Set!
+              </Text>
+            </View>
+            <Text style={{ color: '#8B6914', lineHeight: 20 }}>
+              Your settings have been configured. You can always return here to update your preferences from the main menu.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
