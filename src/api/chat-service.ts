@@ -201,7 +201,7 @@ Consider:
 7. Infectious disease patterns in Africa
 8. Nutritional and environmental factors`;
 
-    const response = await getOpenAITextResponse(prompt);
+    const response = await getOpenAITextResponse([{ role: "user", content: prompt }]);
     
     try {
       const analysis = JSON.parse(response);

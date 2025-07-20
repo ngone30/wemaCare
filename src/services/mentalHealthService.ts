@@ -199,7 +199,7 @@ Focus on:
 7. Appetite changes
 8. Cognitive difficulties`;
 
-    const response = await getOpenAITextResponse(prompt);
+    const response = await getOpenAITextResponse([{ role: "user", content: prompt }]);
     
     try {
       // Try to parse JSON response
