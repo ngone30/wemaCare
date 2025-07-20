@@ -6,7 +6,6 @@ import { useAuthStore } from '../state/authStore';
 import { useHealthcareStore } from '../state/healthcareStore';
 import { RecommendedDoctor, SymptomInput } from '../types/healthcare';
 import AppHeader from '../components/AppHeader';
-import { useTranslation } from '../hooks/useTranslation';
 
 interface HomeScreenProps {
   onStartSymptomInput: () => void;
@@ -27,7 +26,6 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { user, logout } = useAuthStore();
   const { recommendations, appointments, conversations } = useHealthcareStore();
-  const { t } = useTranslation();
   const [showQR, setShowQR] = useState(false);
 
   const upcomingAppointments = appointments
