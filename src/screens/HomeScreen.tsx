@@ -432,7 +432,7 @@ Generated: ${new Date().toLocaleString()}
                   Upcoming Appointments
                 </Text>
                 <Pressable onPress={onViewAppointments}>
-                  <Text className="text-blue-500 font-medium">View All</Text>
+                  <Text style={{ color: '#2E7D32', fontWeight: '500' }}>View All</Text>
                 </Pressable>
               </View>
               
@@ -482,7 +482,7 @@ Generated: ${new Date().toLocaleString()}
                   Recent Messages
                 </Text>
                 <Pressable onPress={onViewMessages}>
-                  <Text className="text-blue-500 font-medium">View All</Text>
+                  <Text style={{ color: '#2E7D32', fontWeight: '500' }}>View All</Text>
                 </Pressable>
               </View>
               
@@ -504,7 +504,16 @@ Generated: ${new Date().toLocaleString()}
                           {new Date(conversation.updatedAt).toLocaleDateString()}
                         </Text>
                         {conversation.unreadCount > 0 && (
-                          <View className="bg-blue-500 rounded-full min-w-[20px] h-5 px-1 items-center justify-center mt-1">
+                          <View style={{
+                            backgroundColor: '#2E7D32',
+                            borderRadius: 10,
+                            minWidth: 20,
+                            height: 20,
+                            paddingHorizontal: 4,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginTop: 4
+                          }}>
                             <Text className="text-white text-xs font-medium">
                               {conversation.unreadCount}
                             </Text>
@@ -727,7 +736,10 @@ Generated: ${new Date().toLocaleString()}
                         <Text className="text-gray-900 font-semibold">
                           {doctor.name}
                         </Text>
-                        <Text className="text-blue-600 font-medium">
+                        <Text style={{
+                          color: '#2E7D32',
+                          fontWeight: '500'
+                        }}>
                           {doctor.specialty}
                         </Text>
                         <View className="flex-row items-center mt-2">

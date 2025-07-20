@@ -74,9 +74,20 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {/* QR Code Section */}
-          <View className="px-6 py-6 bg-blue-50 border-b border-blue-100">
+          <View style={{
+            paddingHorizontal: 24,
+            paddingVertical: 24,
+            backgroundColor: '#E8F5E8',
+            borderBottomWidth: 1,
+            borderBottomColor: '#C8E6C9'
+          }}>
             <View className="items-center">
-              <Text className="text-lg font-semibold text-blue-900 mb-4">
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '600',
+                color: '#2E7D32',
+                marginBottom: 16
+              }}>
                 Medical Card QR Code
               </Text>
               
@@ -98,9 +109,14 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
                 </View>
               )}
 
-              <View className="flex-row space-x-3">
+              <View style={{ flexDirection: 'row', gap: 12 }}>
                 <Pressable
-                  className="bg-blue-500 rounded-xl px-6 py-3"
+                  style={{
+                    backgroundColor: '#2E7D32',
+                    borderRadius: 12,
+                    paddingHorizontal: 24,
+                    paddingVertical: 12
+                  }}
                   onPress={() => setShowQR(!showQR)}
                 >
                   <Text className="text-white font-semibold">
@@ -109,14 +125,24 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
                 </Pressable>
                 
                 <Pressable
-                  className="bg-green-500 rounded-xl px-6 py-3"
+                  style={{
+                    backgroundColor: '#FBC02D',
+                    borderRadius: 12,
+                    paddingHorizontal: 24,
+                    paddingVertical: 12
+                  }}
                   onPress={shareProfile}
                 >
                   <Text className="text-white font-semibold">Share Profile</Text>
                 </Pressable>
               </View>
               
-              <Text className="text-blue-700 text-sm text-center mt-3">
+              <Text style={{
+                color: '#2E7D32',
+                fontSize: 14,
+                textAlign: 'center',
+                marginTop: 12
+              }}>
                 Share this QR code with healthcare providers for instant access to your medical information
               </Text>
             </View>
@@ -202,18 +228,33 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
                 )}
               </View>
               
-              <View className="bg-blue-50 rounded-xl p-4">
-                <Text className="text-blue-800 font-medium mb-2">Current Medications</Text>
+              <View style={{
+                backgroundColor: '#E8F5E8',
+                borderRadius: 12,
+                padding: 16
+              }}>
+                <Text style={{
+                  color: '#2E7D32',
+                  fontWeight: '500',
+                  marginBottom: 8
+                }}>Current Medications</Text>
                 {user.medicalProfile.medications.length > 0 ? (
                   <View className="flex-row flex-wrap">
                     {user.medicalProfile.medications.map((medication, index) => (
-                      <View key={index} className="bg-blue-200 rounded-lg px-3 py-1 mr-2 mb-2">
-                        <Text className="text-blue-800">{medication}</Text>
+                      <View key={index} style={{
+                        backgroundColor: '#C8E6C9',
+                        borderRadius: 8,
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        marginRight: 8,
+                        marginBottom: 8
+                      }}>
+                        <Text style={{ color: '#2E7D32' }}>{medication}</Text>
                       </View>
                     ))}
                   </View>
                 ) : (
-                  <Text className="text-blue-600">No medications listed</Text>
+                  <Text style={{ color: '#2E7D32' }}>No medications listed</Text>
                 )}
               </View>
               
@@ -324,7 +365,12 @@ Emergency Contact: ${user.medicalProfile.emergencyContact.name} (${user.medicalP
           {/* Actions */}
           <View className="px-6 py-6 space-y-3">
             <Pressable
-              className="bg-blue-500 rounded-xl py-4 items-center"
+              style={{
+                backgroundColor: '#2E7D32',
+                borderRadius: 12,
+                paddingVertical: 16,
+                alignItems: 'center'
+              }}
               onPress={onEditProfile}
             >
               <Text className="text-white font-semibold text-lg">
