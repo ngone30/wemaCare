@@ -68,10 +68,7 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 
 ---
 
-
----
-
-## ⚔️ Challenges We Faced
+## Challenges We Faced
 
 - Designing fully offline AI services.
 - Emotional toll of researching preventable deaths.
@@ -81,7 +78,7 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 
 ---
 
-## 🏆 Accomplishments We're Proud Of
+## Accomplishments We're Proud Of
 
 - Built a working prototype in **under 3 days** after pivoting late in the hackathon.
 - Created three optimized AI models that run offline.
@@ -90,7 +87,7 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 
 ---
 
-## 📚 What We Learned
+## What We Learned
 
 - Perseverance and grit under pressure.
 - How to translate empathy into design and code.
@@ -98,7 +95,7 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 
 ---
 
-## 🔮 What’s Next for WemaCARE
+## What’s Next for WemaCARE
 
 - 🎯 Launch pilot across **Kenya, Nigeria, and Senegal**
 - 🤝 Partner with clinics to integrate WemaCARE into workflows
