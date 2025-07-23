@@ -1,18 +1,17 @@
 # WemaCARE – Kind AI for Every African Life
 
-**WemaCARE** is an AI-powered, offline-first healthcare navigator designed to help underserved communities in Africa access fast, accurate, and culturally-aware diagnosis and support even without internet. It connects patients to the right specialists using intelligent voice, text, and image analysis.
+**WemaCARE** is an AI-powered, offline-first healthcare navigator designed to help underserved communities in Africa access fast, accurate and culturally-aware diagnosis and support even without internet. 
+- It connects patients to the right specialists using intelligent voice, text and image analysis.
 
 > “Wema” means *Kindness* in Swahili — this app is built on empathy, innovation and inclusion.
 
----
 
 ## Inspiration
 
-Growing up in Africa with my dad being a doctor, I saw firsthand the challenges both patients and healthcare workers face — delayed diagnosis, lack of awareness, stigma, and systemic gaps. Some of our own relatives lived for years with untreated conditions. I realized the problem wasn’t just hospitals — it was **access**, **information**, and **timing**. 
+Growing up in Africa with my dad being a doctor, I saw firsthand the challenges both patients and healthcare workers face — delayed diagnosis, lack of awareness, stigma and systemic gaps. Some of our own relatives lived for years with untreated conditions. I realized the problem wasn’t just hospitals — it was **access**, **information** and **timing**. 
 
 I dreamed of becoming a doctor. Life led me to engineering instead, but I never left behind my passion for solving healthcare problems. **WemaCARE** is that dream reborn — using tech and kindness to change lives.
 
----
 
 ## What WemaCARE Does
 
@@ -33,7 +32,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - **Offline-First Experience**  
   - 🚫 No internet? No problem. WemaCARE works on low-end Android devices with local models under 50MB.
 
----
 
 ## Tech Stack
 
@@ -48,7 +46,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 | 🗣️ Voice Input  | Google Speech-to-Text API                   |
 | 🧪 Others       | TypeScript, JSON, StitchAI                  |
 
----
 
 ## How We Built It
 
@@ -58,7 +55,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - Built three AI models to handle multimodal input (voice, text, image).
 - Prioritized multilingual and offline-first design from day one.
 
----
 
 ## AI Models Used
 
@@ -66,7 +62,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - **Gemini 2.0 Flash-Lite** – Lightweight for fast use on low-end phones
 - **Gemma 3** – Designed for emergencies in offline mode
 
----
 
 ## Challenges We Faced
 
@@ -76,7 +71,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - Adapting for communities and conditions we hadn't personally experienced.
 - Balancing school, C++ hardware learning, and building WemaCARE — all at once.
 
----
 
 ## Accomplishments We're Proud Of
 
@@ -85,7 +79,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - Designed a culturally relevant and inclusive health experience.
 - Never gave up — even when everything seemed impossible.
 
----
 
 ## What We Learned
 
@@ -93,7 +86,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - How to translate empathy into design and code.
 - That innovation only matters if it works in the hands of those who need it most.
 
----
 
 ## What’s Next for WemaCARE
 
@@ -104,7 +96,6 @@ WemaCARE isn’t just “another health app” — it’s the bridge I wish exis
 - 🔬 Build low-cost diagnostic hardware using mechatronics background
 - 🎙️ Voice-first updates and mental health add-ons
 
----
 
 ## 🌍 Why WemaCARE Matters
 
@@ -113,11 +104,10 @@ We dream of a future where **every African child, parent, and grandparent** has 
 > WemaCARE is just the beginning.  
 > Technology made for **humanity** — not just profit.
 
----
 
 ## Demo & Landing Page
 
-- 🔗 [Landing Page](https://wema-care.netlify.app/)
+- 🔗 Landing Page[click to view](https://wema-care.netlify.app/)
 - 🎥 Demo Video: [click to view](https://youtu.be/srX_OrCV0hE/)
 
 ---
