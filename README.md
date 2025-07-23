@@ -116,9 +116,9 @@ We dream of a future where **every African child, parent, and grandparent** has 
 
 | Name     | Role                        | Social Links |
 |----------|-----------------------------|--------------|
-| **Eric Nzyoka** | Backend + AI Integration + Communication | [GitHub](https://github.com/nzyoka10 · [LinkedIn](https://linkedin.com/in/ericnzyoka) |
-| **Becky** | UI/UX + Frontend + Note Sharing  | [GitHub](https://github.com/cheropbecky . [LinkedIn](https://www.linkedin.com/in/cheropbecky) |
-| **Rosalie** | Symptom Checker + Prompt Logic + Picth Deck | [GitHub](https://github.com/ngone30 . [LinkedIn](https://www.linkedin.com/in/ngoné-thiam-3873942b4) |
+| **Eric Nzyoka** | Backend + AI Integration + Communication | [GitHub](https://github.com/nzyoka10) · [LinkedIn](https://linkedin.com/in/ericnzyoka) |
+| **Becky** | UI/UX + Frontend + Note Sharing  | [GitHub](https://github.com/cheropbecky) . [LinkedIn](https://www.linkedin.com/in/cheropbecky) |
+| **Rosalie** | Symptom Checker + Prompt Logic + Picth Deck | [GitHub](https://github.com/ngone30) . [LinkedIn](https://www.linkedin.com/in/ngoné-thiam-3873942b4) |
 
 
 ---
