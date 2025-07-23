@@ -110,7 +110,6 @@ We dream of a future where **every African child, parent, and grandparent** has 
 - 🔗 Landing Page[click to view](https://wema-care.netlify.app/)
 - 🎥 Demo Video: [click to view](https://youtu.be/srX_OrCV0hE/)
 
----
 
 ## Team WemaCARE
 
@@ -121,27 +120,60 @@ We dream of a future where **every African child, parent, and grandparent** has 
 | **Rosalie** | Symptom Checker + Prompt Logic + Picth Deck | [GitHub](https://github.com/ngone30) . [LinkedIn](https://www.linkedin.com/in/ngoné-thiam-3873942b4) |
 
 
----
-
 ## License
 
 MIT License – Feel free to use, modify, and contribute.
 
----
 
 ## Built With
 
-- [Flutter](https://flutter.dev/)
-- [TensorFlow Lite](https://www.tensorflow.org/lite)
-- [Firebase](https://firebase.google.com/)
-- [Gemini API](https://deepmind.google/technologies/gemini/)
-- [Node.js](https://nodejs.org/)
-- [SQLite](https://www.sqlite.org/)
-- [Google Speech-to-Text](https://cloud.google.com/speech-to-text)
-- [Figma](https://figma.com/)
-- [StitchAI](https://stitch-ai.com/) (explored)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Expo](https://expo.dev/)
+<p align="left">
+
+  <a href="https://flutter.dev/" target="_blank">
+    <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter" />
+  </a>
+
+  <a href="https://www.tensorflow.org/lite" target="_blank">
+    <img src="https://img.shields.io/badge/TensorFlow_Lite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" alt="TensorFlow Lite" />
+  </a>
+
+  <a href="https://firebase.google.com/" target="_blank">
+    <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
+  </a>
+
+  <a href="https://deepmind.google/technologies/gemini/" target="_blank">
+    <img src="https://img.shields.io/badge/Gemini%20API-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini API" />
+  </a>
+
+  <a href="https://nodejs.org/" target="_blank">
+    <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  </a>
+
+  <a href="https://www.sqlite.org/" target="_blank">
+    <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+  </a>
+
+  <a href="https://cloud.google.com/speech-to-text" target="_blank">
+    <img src="https://img.shields.io/badge/Speech--to--Text-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Speech-to-Text" />
+  </a>
+
+  <a href="https://figma.com/" target="_blank">
+    <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma" />
+  </a>
+
+  <a href="https://stitch-ai.com/" target="_blank">
+    <img src="https://img.shields.io/badge/StitchAI-5E60CE?style=for-the-badge" alt="StitchAI" />
+  </a>
+
+  <a href="https://www.typescriptlang.org/" target="_blank">
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  </a>
+
+  <a href="https://expo.dev/" target="_blank">
+    <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
+  </a>
+
+</p>
 
 
 
